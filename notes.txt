@@ -1,0 +1,9 @@
+GameIO Liquid Glass update plan
+
+1. Add full-body animated mascot under room code.
+2. Add moving name tag below mascot.
+3. Make room code tappable to copy code.
+4. Make room code double-tap generate/copy invite link.
+5. Add Liquid Glass UI styling: translucent panels, blur, glossy borders.
+6. Keep stable games/avatars/scores working first.
+7. Firebase Hosting cannot be pushed from this connector, but GitHub Pages can use Firebase Realtime Database.
