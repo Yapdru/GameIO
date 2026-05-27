@@ -1,0 +1,1 @@
+window.go3d=async()=>{const m=document.getElementById('threeMount')||document.body.appendChild(Object.assign(document.createElement('div'),{id:'threeMount'}));m.style.cssText='position:fixed;inset:0;z-index:9999';const v=await import('./v8-3d.js');v.startV8(m)};
