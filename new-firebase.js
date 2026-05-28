@@ -1,34 +1,29 @@
-// Firebase integration - for multiplayer rooms
-// Works with existing Firebase config or offline mode
-
+// Firebase Realtime Database integration for multiplayer
 const DB_URL = "https://gameio-7e343-default-rtdb.firebaseio.com";
 
 export async function apiCall(path, method = 'GET', data = null) {
   try {
-    const options = {
-      method,
-      headers: { 'Content-Type': 'application/json' }
-    };
+    const options = { method, headers: { 'Content-Type': 'application/json' } };
     if (data) options.body = JSON.stringify(data);
 
     const response = await fetch(`${DB_URL}${path}.json`, options);
     if (!response.ok) return null;
     return await response.json();
   } catch (err) {
-    console.log('Firebase unavailable - offline mode');
+    console.warn('Firebase error:', err);
     return null;
   }
 }
 
-export async function createRoom(playerData) {
+export async function createRoom(gameCode, playerData) {
   const code = generateRoomCode();
   const roomData = {
     code,
+    game: gameCode,
     createdAt: Date.now(),
-    host: playerData.id,
     players: { [playerData.id]: playerData },
-    currentGame: 0,
-    started: false
+    started: false,
+    scores: {}
   };
 
   await apiCall(`/rooms/${code}`, 'PUT', roomData);
@@ -51,9 +46,22 @@ export async function updatePlayerScore(code, playerId, score) {
   await apiCall(`/rooms/${code}/players/${playerId}/score`, 'PUT', score);
 }
 
-export async function startGame(code, gameIndex) {
+export async function startRoom(code) {
   await apiCall(`/rooms/${code}/started`, 'PUT', true);
-  await apiCall(`/rooms/${code}/currentGame`, 'PUT', gameIndex);
+}
+
+export async function deleteRoom(code) {
+  await apiCall(`/rooms/${code}`, 'DELETE');
+}
+
+export async function waitForRoom(code, maxWait = 8000) {
+  const startTime = Date.now();
+  while (Date.now() - startTime < maxWait) {
+    const room = await apiCall(`/rooms/${code}`);
+    if (room && room.players) return room;
+    await new Promise(r => setTimeout(r, 250));
+  }
+  return null;
 }
 
 function generateRoomCode() {
@@ -65,27 +73,24 @@ function generateRoomCode() {
   return code;
 }
 
-// Offline room for Quick Play
+// Offline mode fallback
 export class OfflineRoom {
-  constructor(playerData) {
-    this.code = 'OFFLINE';
-    this.host = playerData.id;
+  constructor(code, playerData) {
+    this.code = code;
     this.players = { [playerData.id]: playerData };
-    this.currentGame = 0;
     this.started = false;
+    this.scores = {};
   }
 
   addPlayer(playerData) {
     this.players[playerData.id] = playerData;
   }
 
-  updateScore(playerId, score) {
-    if (this.players[playerId]) {
-      this.players[playerId].score = score;
-    }
+  start() {
+    this.started = true;
   }
 
-  setCurrentGame(index) {
-    this.currentGame = index;
+  updateScore(playerId, score) {
+    this.scores[playerId] = score;
   }
 }
