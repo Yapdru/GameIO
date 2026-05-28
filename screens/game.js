@@ -6,6 +6,10 @@ import { firebase } from '../firebase.js';
 import { FishanaGame } from '../games/fishana.js';
 import { CarsGame } from '../games/cars.js';
 import { BadaamGame } from '../games/badaam.js';
+import { SpaceGame } from '../games/space.js';
+import { ObbyGame } from '../games/obby.js';
+import { QuizGame } from '../games/quiz.js';
+import { MathDashGame } from '../games/mathdash.js';
 
 export class GameScreen extends Screen {
   constructor() {
@@ -77,6 +81,18 @@ export class GameScreen extends Screen {
     } else if (gameKey === 'badaam') {
       this.game = new BadaamGame();
       this.renderBadaam(canvas);
+    } else if (gameKey === 'space') {
+      this.game = new SpaceGame(canvas);
+      this.game.start();
+    } else if (gameKey === 'obby') {
+      this.game = new ObbyGame(canvas);
+      this.game.start();
+    } else if (gameKey === 'quiz') {
+      this.game = new QuizGame();
+      this.renderQuiz(canvas);
+    } else if (gameKey === 'mathdash') {
+      this.game = new MathDashGame();
+      this.renderMathDash(canvas);
     } else {
       // Placeholder for other games
       this.game = {
@@ -148,6 +164,124 @@ export class GameScreen extends Screen {
     gameUI.appendChild(handLabel);
     gameUI.appendChild(hand);
     gameUI.appendChild(actions);
+
+    container.appendChild(gameUI);
+  }
+
+  renderQuiz(canvas) {
+    const container = canvas.parentElement;
+    container.innerHTML = '';
+
+    const gameUI = this.createElement('div', 'flex flex-col gap-4', '');
+    gameUI.style.padding = '20px';
+    gameUI.style.flex = '1';
+    gameUI.style.overflowY = 'auto';
+    gameUI.style.display = 'flex';
+    gameUI.style.flexDirection = 'column';
+    gameUI.style.justifyContent = 'center';
+    gameUI.style.alignItems = 'center';
+
+    // Progress
+    const progress = this.createElement('div', '', `Question ${this.game.getProgress()}`);
+    progress.style.fontSize = '16px';
+    progress.style.marginBottom = '20px';
+
+    // Timer
+    const timeRemaining = Math.ceil(this.game.getTimeRemaining());
+    const timer = this.createElement('div', '', `Time: ${timeRemaining}s`);
+    timer.style.fontSize = '18px';
+    timer.style.color = timeRemaining < 5 ? '#ff6b6b' : 'white';
+    timer.style.marginBottom = '20px';
+
+    // Question
+    const question = this.game.getCurrentQuestion();
+    const qEl = this.createElement('h2', '', question.q);
+    qEl.style.textAlign = 'center';
+    qEl.style.marginBottom = '40px';
+    qEl.style.fontSize = '28px';
+
+    // Answers
+    const answers = this.createElement('div', 'flex flex-col gap-3', '');
+    answers.style.maxWidth = '500px';
+    question.a.forEach((answer, idx) => {
+      const answerBtn = this.createElement('button', 'primary', answer);
+      answerBtn.style.padding = '15px 20px';
+      answerBtn.style.fontSize = '18px';
+      answerBtn.style.width = '100%';
+      answerBtn.onclick = () => {
+        this.game.answerQuestion(idx);
+        setTimeout(() => {
+          if (this.game.isRunning) {
+            this.renderQuiz(canvas);
+          }
+        }, 1000);
+      };
+      answers.appendChild(answerBtn);
+    });
+
+    gameUI.appendChild(progress);
+    gameUI.appendChild(timer);
+    gameUI.appendChild(qEl);
+    gameUI.appendChild(answers);
+
+    container.appendChild(gameUI);
+  }
+
+  renderMathDash(canvas) {
+    const container = canvas.parentElement;
+    container.innerHTML = '';
+
+    const gameUI = this.createElement('div', 'flex flex-col gap-4', '');
+    gameUI.style.padding = '20px';
+    gameUI.style.flex = '1';
+    gameUI.style.overflowY = 'auto';
+    gameUI.style.display = 'flex';
+    gameUI.style.flexDirection = 'column';
+    gameUI.style.justifyContent = 'center';
+    gameUI.style.alignItems = 'center';
+
+    // Progress
+    const progress = this.createElement('div', '', `Problem ${this.game.getProgress()}`);
+    progress.style.fontSize = '16px';
+    progress.style.marginBottom = '20px';
+
+    // Timer
+    const timeRemaining = Math.ceil(this.game.getTimeRemaining());
+    const timer = this.createElement('div', '', `Time: ${timeRemaining}s`);
+    timer.style.fontSize = '18px';
+    timer.style.color = timeRemaining < 5 ? '#ff6b6b' : 'white';
+    timer.style.marginBottom = '20px';
+
+    // Problem
+    const problem = this.game.currentProblem;
+    const problemEl = this.createElement('h2', '', `${problem.a} ${problem.op} ${problem.b} = ?`);
+    problemEl.style.textAlign = 'center';
+    problemEl.style.marginBottom = '40px';
+    problemEl.style.fontSize = '32px';
+
+    // Answer choices
+    const choices = this.createElement('div', 'flex flex-col gap-3', '');
+    choices.style.maxWidth = '500px';
+    problem.choices.forEach((choice, idx) => {
+      const choiceBtn = this.createElement('button', 'primary', choice.toString());
+      choiceBtn.style.padding = '15px 20px';
+      choiceBtn.style.fontSize = '20px';
+      choiceBtn.style.width = '100%';
+      choiceBtn.onclick = () => {
+        this.game.answerProblem(idx);
+        setTimeout(() => {
+          if (this.game.isRunning) {
+            this.renderMathDash(canvas);
+          }
+        }, 800);
+      };
+      choices.appendChild(choiceBtn);
+    });
+
+    gameUI.appendChild(progress);
+    gameUI.appendChild(timer);
+    gameUI.appendChild(problemEl);
+    gameUI.appendChild(choices);
 
     container.appendChild(gameUI);
   }
