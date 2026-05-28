@@ -3,6 +3,7 @@
 import { Screen, screenManager } from '../screens.js';
 import { gameState } from '../state.js';
 import { firebase } from '../firebase.js';
+import { audioSystem } from '../audio-system.js';
 
 export class ResultsScreen extends Screen {
   constructor() {
@@ -11,6 +12,19 @@ export class ResultsScreen extends Screen {
     this.element.style.display = 'flex';
     this.element.style.flexDirection = 'column';
     this.element.style.background = 'linear-gradient(135deg, #1a5f7a 0%, #0f3a4a 100%)';
+    this.celebrationPlayed = false;
+  }
+
+  getCelebrationMessage(rank, score) {
+    const messages = {
+      0: ['🏆 CHAMPION! 🏆', '🔥 DOMINATING! 🔥', '⭐ LEGENDARY! ⭐'],
+      1: ['🎉 Great Job! 🎉', '💪 Strong Showing! 💪', '👑 Nice Work! 👑'],
+      2: ['👏 Solid Performance 👏', '🎯 Well Done! 🎯', '✨ Good Job! ✨'],
+      default: ['📈 Keep Improving! 📈', '🚀 Getting Better! 🚀', '💫 Nice Try! 💫']
+    };
+
+    const msgArray = messages[rank] || messages.default;
+    return msgArray[Math.floor(Math.random() * msgArray.length)];
   }
 
   build() {
@@ -59,7 +73,7 @@ export class ResultsScreen extends Screen {
       })
       .sort((a, b) => b.score - a.score);
 
-    // Display scores
+    // Display scores with animation
     sortedPlayers.forEach((player, idx) => {
       const scoreRow = this.createElement('div', '', '');
       scoreRow.style.padding = '15px';
@@ -68,6 +82,15 @@ export class ResultsScreen extends Screen {
       scoreRow.style.borderLeft = player.isCurrentPlayer ? '4px solid #ffd84d' : '4px solid transparent';
       scoreRow.style.borderRadius = '4px';
       scoreRow.style.color = 'white';
+      scoreRow.style.transition = 'all 0.3s ease';
+      scoreRow.style.transform = `translateY(${idx * 5}px)`;
+
+      // Scale first place row
+      if (idx === 0) {
+        scoreRow.style.transform = 'scale(1.05)';
+        scoreRow.style.background = 'rgba(255, 216, 77, 0.3)';
+        scoreRow.style.boxShadow = '0 0 20px rgba(255, 216, 77, 0.3)';
+      }
 
       let medal = '';
       if (idx === 0) medal = '🥇 ';
@@ -78,7 +101,20 @@ export class ResultsScreen extends Screen {
       scoreText.innerHTML = `${medal}<strong>${player.name}</strong>: ${Math.floor(player.score)} pts`;
       scoreText.style.fontSize = '18px';
 
-      scoreRow.appendChild(scoreText);
+      // Add celebration message for current player
+      if (player.isCurrentPlayer) {
+        const celebration = this.createElement('div', '', '');
+        celebration.innerHTML = this.getCelebrationMessage(idx, player.score);
+        celebration.style.fontSize = '14px';
+        celebration.style.marginTop = '5px';
+        celebration.style.color = '#ffd84d';
+        celebration.style.fontWeight = 'bold';
+        scoreRow.appendChild(scoreText);
+        scoreRow.appendChild(celebration);
+      } else {
+        scoreRow.appendChild(scoreText);
+      }
+
       leaderboard.appendChild(scoreRow);
     });
 
@@ -114,11 +150,29 @@ export class ResultsScreen extends Screen {
   }
 
   onShow() {
+    this.build();
+
     // Refresh scores from Firebase
     if (gameState.roomCode) {
       firebase.getRoomPlayers(gameState.roomCode, (players) => {
         // Update game state with latest scores
       });
+    }
+
+    // Play celebration sound based on player's rank
+    if (!this.celebrationPlayed) {
+      this.celebrationPlayed = true;
+      setTimeout(() => {
+        const sortedPlayers = Object.entries(gameState.scores)
+          .map(([playerId, score]) => ({
+            id: playerId,
+            score: score
+          }))
+          .sort((a, b) => b.score - a.score);
+
+        const playerRank = sortedPlayers.findIndex(p => p.id === gameState.playerId);
+        audioSystem.playGameEndSound(playerRank === 0);
+      }, 500);
     }
   }
 }

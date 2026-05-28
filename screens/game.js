@@ -3,6 +3,8 @@
 import { Screen, screenManager } from '../screens.js';
 import { gameState } from '../state.js';
 import { firebase } from '../firebase.js';
+import { GAMES } from '../config.js';
+import { audioSystem } from '../audio-system.js';
 import { FishanaGame } from '../games/fishana.js';
 import { CarsGame } from '../games/cars.js';
 import { BadaamGame } from '../games/badaam.js';
@@ -11,12 +13,80 @@ import { ObbyGame } from '../games/obby.js';
 import { QuizGame } from '../games/quiz.js';
 import { MathDashGame } from '../games/mathdash.js';
 
+// Game descriptions for instruction screens
+const GAME_EXPLANATIONS = {
+  fishana: {
+    title: '🐟 Fishana Evolution',
+    rules: [
+      'Swim around and collect pearls',
+      'Avoid the enemy fish',
+      'Collect enough pearls to evolve',
+      'Higher levels = more points'
+    ]
+  },
+  cars: {
+    title: '🏎️ Cars Horizon',
+    rules: [
+      'Drive smoothly around the track',
+      'Use ARROW KEYS or WASD to steer',
+      'Drift around corners for bonus points',
+      'Complete laps before time runs out'
+    ]
+  },
+  badaam: {
+    title: '🃏 Badaam Saat',
+    rules: [
+      '7s are always playable',
+      'Match suit or rank to play',
+      'Score points from card values',
+      'Play or Pass - strategic choices'
+    ]
+  },
+  space: {
+    title: '🚀 Space Dash',
+    rules: [
+      'Navigate through the asteroid field',
+      'Avoid obstacles',
+      'Collect stars for bonus points',
+      'Survive as long as possible'
+    ]
+  },
+  obby: {
+    title: '🧗 Sky Obby',
+    rules: [
+      'Jump across platforms',
+      'Reach checkpoints to progress',
+      'Avoid falling off the edges',
+      'Reach the top to win'
+    ]
+  },
+  quiz: {
+    title: '🧠 Quiz Master',
+    rules: [
+      'Answer multiple choice questions',
+      'Each correct answer = 10 points',
+      'Answer quickly for bonus time',
+      'Beat the 60-second challenge'
+    ]
+  },
+  mathdash: {
+    title: '🔢 Math Dash',
+    rules: [
+      'Solve math problems quickly',
+      'Each correct answer = 10 points',
+      'Problems get harder as you go',
+      'Accuracy matters more than speed'
+    ]
+  }
+};
+
 export class GameScreen extends Screen {
   constructor() {
     super();
     this.element.className = 'screen';
     this.game = null;
     this.syncInterval = null;
+    this.gameStarted = false;
   }
 
   build() {
@@ -31,22 +101,33 @@ export class GameScreen extends Screen {
     hud.style.color = 'white';
     hud.style.padding = '12px 20px';
     hud.style.borderBottom = '2px solid #0f8fe8';
+    hud.style.fontSize = '14px';
 
-    const gameTitle = this.createElement('h2', '', gameState.currentGame.toUpperCase());
-    gameTitle.style.margin = '0';
+    const gameInfo = this.createElement('div', 'flex gap-4 items-center', '');
+
+    const gameTitle = this.createElement('span', '', gameState.currentGame.toUpperCase());
+    gameTitle.style.fontWeight = 'bold';
+    gameTitle.style.fontSize = '16px';
+
+    const playerCount = this.createElement('span', '', `Players: ${gameState.players.length}`);
+    gameInfo.appendChild(gameTitle);
+    gameInfo.appendChild(playerCount);
 
     const scoreDisplay = this.createElement('div', '', '');
-    scoreDisplay.style.fontSize = '18px';
+    scoreDisplay.style.fontSize = '16px';
     scoreDisplay.id = 'scoreDisplay';
+    scoreDisplay.style.fontWeight = 'bold';
 
     const controls = this.createElement('div', 'flex gap-2', '');
 
-    const finishBtn = this.createElement('button', 'secondary', 'Finish Game');
-    finishBtn.onclick = () => this.endGame();
+    const backBtn = this.createElement('button', 'secondary', '← Back to Lobby');
+    backBtn.style.fontSize = '12px';
+    backBtn.style.padding = '6px 12px';
+    backBtn.onclick = () => this.backToLobby();
 
-    controls.appendChild(finishBtn);
+    controls.appendChild(backBtn);
 
-    hud.appendChild(gameTitle);
+    hud.appendChild(gameInfo);
     hud.appendChild(scoreDisplay);
     hud.appendChild(controls);
 
@@ -286,9 +367,78 @@ export class GameScreen extends Screen {
     container.appendChild(gameUI);
   }
 
+  showGameInstructions() {
+    const modal = this.createElement('div', '', '');
+    modal.style.position = 'fixed';
+    modal.style.inset = '0';
+    modal.style.background = 'rgba(0,0,0,0.95)';
+    modal.style.display = 'flex';
+    modal.style.flexDirection = 'column';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    modal.style.zIndex = '1000';
+    modal.style.gap = '20px';
+    modal.style.color = 'white';
+
+    const gameKey = gameState.currentGame;
+    const explanation = GAME_EXPLANATIONS[gameKey] || { title: gameKey, rules: [] };
+
+    const title = this.createElement('h1', '', explanation.title);
+    title.style.fontSize = '48px';
+    title.style.margin = '0 0 20px 0';
+
+    const rules = this.createElement('div', '', '');
+    rules.style.fontSize = '20px';
+    rules.style.maxWidth = '600px';
+    rules.style.lineHeight = '2';
+    rules.innerHTML = explanation.rules.map(r => `• ${r}`).join('<br>');
+
+    const startBtn = this.createElement('button', 'primary', 'Start Game');
+    startBtn.style.padding = '15px 40px';
+    startBtn.style.fontSize = '18px';
+    startBtn.style.marginTop = '40px';
+    startBtn.onclick = () => {
+      modal.remove();
+      this.gameStarted = true;
+      if (this.game) {
+        if (this.game.start && typeof this.game.start === 'function') {
+          this.game.start();
+        }
+      }
+      audioSystem.playSFX('menu-click');
+    };
+
+    modal.appendChild(title);
+    modal.appendChild(rules);
+    modal.appendChild(startBtn);
+
+    this.element.appendChild(modal);
+  }
+
+  backToLobby() {
+    if (this.game) {
+      this.game.stop();
+    }
+    if (this.syncInterval) {
+      clearInterval(this.syncInterval);
+    }
+    screenManager.show('lobby');
+  }
+
   onShow() {
-    // Sync score every second
-    this.syncInterval = setInterval(() => this.syncScore(), 1000);
+    this.build();
+
+    // Show instructions first
+    setTimeout(() => {
+      this.showGameInstructions();
+    }, 100);
+
+    // Sync score every second (only if game started)
+    this.syncInterval = setInterval(() => {
+      if (this.gameStarted) {
+        this.syncScore();
+      }
+    }, 1000);
 
     // Handle window resize
     window.addEventListener('resize', () => this.handleResize());
