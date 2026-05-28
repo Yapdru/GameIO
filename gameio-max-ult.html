@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameIO MAX ULT - Multiplayer Game Platform</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Press Start 2P', 'Courier New', monospace;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: #00ff00;
+      overflow: hidden;
+      image-rendering: pixelated;
+    }
+
+    #boot {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #0f0f1e, #1a1a2e);
+      z-index: 1000;
+      text-align: center;
+      animation: fadeIn 0.5s;
+    }
+
+    .title {
+      font-size: 48px;
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+      margin: 20px;
+      letter-spacing: 2px;
+      animation: pulse 1s infinite;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: #00aa00;
+      margin: 10px;
+      letter-spacing: 1px;
+    }
+
+    .button-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    .start-btn {
+      background: #00ff00;
+      color: #000;
+      border: 3px solid #00ff00;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-family: 'Press Start 2P', monospace;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .start-btn:hover {
+      background: #000;
+      color: #00ff00;
+      box-shadow: 0 0 20px #00ff00;
+    }
+
+    .key-hint {
+      font-size: 8px;
+      color: #00aa00;
+      margin-top: 15px;
+      line-height: 1.5;
+    }
+
+    #game-container {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #0f0f1e, #1a1a2e);
+    }
+
+    /* Avatar Creator Screen */
+    #avatar-creator {
+      display: none;
+      padding: 20px;
+      color: #00ff00;
+      border: 3px solid #00ff00;
+      max-width: 600px;
+      margin: 20px auto;
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .section-title {
+      font-size: 14px;
+      margin: 15px 0;
+      text-shadow: 0 0 10px #00ff00;
+      border-bottom: 2px solid #00ff00;
+      padding-bottom: 5px;
+    }
+
+    .avatar-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .avatar-item {
+      background: #1a3a1a;
+      border: 2px solid #00aa00;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 32px;
+      transition: all 0.2s;
+    }
+
+    .avatar-item:hover {
+      border-color: #00ff00;
+      box-shadow: 0 0 10px #00ff00;
+      background: #2a4a2a;
+    }
+
+    .avatar-item.selected {
+      background: #00ff00;
+      color: #000;
+      border-color: #00ff00;
+    }
+
+    /* Car Selector */
+    .car-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .car-item {
+      background: #1a3a1a;
+      border: 2px solid #00aa00;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 24px;
+      transition: all 0.2s;
+    }
+
+    .car-item:hover {
+      border-color: #00ff00;
+      box-shadow: 0 0 10px #00ff00;
+    }
+
+    .car-item.selected {
+      background: #00ff00;
+      color: #000;
+      border-color: #00ff00;
+    }
+
+    /* Input Fields */
+    input[type="text"] {
+      background: #000;
+      border: 2px solid #00ff00;
+      color: #00ff00;
+      padding: 8px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      width: 100%;
+      margin: 10px 0;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      box-shadow: 0 0 10px #00ff00;
+    }
+
+    .next-btn {
+      background: #00ff00;
+      color: #000;
+      border: 2px solid #00ff00;
+      padding: 10px 20px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      cursor: pointer;
+      margin-top: 15px;
+      width: 100%;
+    }
+
+    .next-btn:hover {
+      background: #00aa00;
+    }
+
+    /* Game Screen */
+    #game-screen {
+      display: none;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0f0f1e, #1a1a2e);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hud {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      color: #00ff00;
+      font-size: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      border: 2px solid #00ff00;
+      padding: 10px;
+      z-index: 100;
+    }
+
+    .player-name {
+      font-size: 14px;
+      margin: 5px 0;
+    }
+
+    .room-code {
+      font-size: 16px;
+      margin: 10px 0;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    #game-canvas {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0f0f1e, #1a1a2e);
+      image-rendering: pixelated;
+    }
+
+    .lobby-container {
+      display: none;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0f0f1e, #1a1a2e);
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .lobby-title {
+      font-size: 24px;
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+    }
+
+    .game-card {
+      background: rgba(0, 255, 0, 0.1);
+      border: 2px solid #00ff00;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .game-card:hover {
+      background: rgba(0, 255, 0, 0.2);
+      box-shadow: 0 0 15px #00ff00;
+    }
+
+    .game-icon {
+      font-size: 32px;
+      margin: 10px 0;
+    }
+
+    .game-name {
+      font-size: 12px;
+      color: #00ff00;
+      margin: 5px 0;
+    }
+
+    /* Leaderboard & Room System */
+    #leaderboard {
+      display: none;
+      position: fixed;
+      right: 20px;
+      top: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #00ff00;
+      padding: 15px;
+      max-width: 250px;
+      color: #00ff00;
+      font-size: 10px;
+      z-index: 50;
+    }
+
+    .leaderboard-title {
+      font-size: 12px;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px #00ff00;
+      border-bottom: 1px solid #00ff00;
+      padding-bottom: 5px;
+    }
+
+    .leaderboard-entry {
+      margin: 5px 0;
+      padding: 3px;
+    }
+
+    #trophy-display {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #ffdd00;
+      padding: 15px;
+      text-align: center;
+      color: #ffdd00;
+      font-size: 10px;
+      z-index: 50;
+    }
+
+    .trophy-icon {
+      font-size: 32px;
+      margin: 5px 0;
+    }
+
+    .trophy-text {
+      font-size: 10px;
+      color: #ffdd00;
+    }
+
+    .room-controls {
+      display: none;
+      position: fixed;
+      left: 20px;
+      bottom: 20px;
+      background: rgba(0, 0, 0, 0.9);
+      border: 2px solid #00ff00;
+      padding: 15px;
+      color: #00ff00;
+      font-size: 10px;
+      z-index: 50;
+    }
+
+    .room-btn {
+      background: #00ff00;
+      color: #000;
+      border: 1px solid #00ff00;
+      padding: 5px 10px;
+      margin: 5px 0;
+      cursor: pointer;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      width: 100%;
+      transition: all 0.2s;
+    }
+
+    .room-btn:hover {
+      background: #00aa00;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 999;
+      grid-place-items: center;
+      border: 2px solid #00ff00;
+    }
+
+    .modal-content {
+      background: #0f0f1e;
+      border: 2px solid #00ff00;
+      padding: 30px;
+      text-align: center;
+      color: #00ff00;
+      max-width: 400px;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .modal-input {
+      background: #000;
+      border: 2px solid #00ff00;
+      color: #00ff00;
+      padding: 10px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      width: 100%;
+      margin: 10px 0;
+    }
+
+    .modal-btn {
+      background: #00ff00;
+      color: #000;
+      border: 2px solid #00ff00;
+      padding: 10px 20px;
+      font-family: 'Press Start 2P', monospace;
+      cursor: pointer;
+      margin: 10px 5px;
+      transition: all 0.2s;
+    }
+
+    .modal-btn:hover {
+      background: #00aa00;
+    }
+
+    @media (max-width: 768px) {
+      #leaderboard {
+        max-width: 200px;
+        right: 10px;
+        top: 10px;
+        font-size: 8px;
+      }
+
+      #trophy-display {
+        bottom: 10px;
+        right: 10px;
+        padding: 10px;
+      }
+
+      .room-controls {
+        left: 10px;
+        bottom: 10px;
+        padding: 10px;
+      }
+
+      .games-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 10px;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { text-shadow: 0 0 10px #00ff00; }
+      50% { text-shadow: 0 0 20px #00ff00; }
+    }
+
+    @keyframes pixelShift {
+      0% { transform: translate(0, 0); }
+      25% { transform: translate(2px, 0); }
+      50% { transform: translate(2px, 2px); }
+      75% { transform: translate(0, 2px); }
+      100% { transform: translate(0, 0); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Boot Screen -->
+  <div id="boot">
+    <div>
+      <div class="title">GAMEIO MAX ULT</div>
+      <div class="subtitle">◆ MULTIPLAYER GAME PLATFORM ◆</div>
+      <div class="button-grid">
+        <button class="start-btn" onclick="startGame()">PRESS START</button>
+      </div>
+      <div class="key-hint">
+        J - QUICK JOIN<br>
+        C - CREATE SERVER<br>
+        CJ - JOIN CODE
+      </div>
+    </div>
+  </div>
+
+  <!-- Avatar Creator -->
+  <div id="avatar-creator">
+    <div class="section-title">▶ CHOOSE YOUR AVATAR</div>
+    <div class="avatar-grid">
+      <div class="avatar-item" onclick="selectAvatar(this, '😎')">😎</div>
+      <div class="avatar-item" onclick="selectAvatar(this, '🤖')">🤖</div>
+      <div class="avatar-item" onclick="selectAvatar(this, '👽')">👽</div>
+      <div class="avatar-item" onclick="selectAvatar(this, '🎭')">🎭</div>
+      <div class="avatar-item" onclick="selectAvatar(this, '🧟')">🧟</div>
+      <div class="avatar-item" onclick="selectAvatar(this, '👾')">👾</div>
+      <div class="avatar-item" onclick="selectAvatar(this, '🤡')">🤡</div>
+      <div class="avatar-item" onclick="selectAvatar(this, '👹')">👹</div>
+    </div>
+
+    <div class="section-title">▶ CHOOSE YOUR CAR</div>
+    <div class="car-grid">
+      <div class="car-item" onclick="selectCar(this, '🚗')">🚗</div>
+      <div class="car-item" onclick="selectCar(this, '🚕')">🚕</div>
+      <div class="car-item" onclick="selectCar(this, '🚙')">🚙</div>
+      <div class="car-item" onclick="selectCar(this, '🏎️')">🏎️</div>
+      <div class="car-item" onclick="selectCar(this, '🚓')">🚓</div>
+      <div class="car-item" onclick="selectCar(this, '🚐')">🚐</div>
+    </div>
+
+    <div class="section-title">▶ ENTER YOUR NAME</div>
+    <input type="text" id="player-name" placeholder="YOUR NAME" maxlength="20">
+
+    <button class="next-btn" onclick="proceedToGame()">START ADVENTURE ▶</button>
+  </div>
+
+  <!-- Lobby Screen -->
+  <div class="lobby-container" id="lobby">
+    <div class="lobby-title">◆ GAMEIO MAX ULT LOBBY ◆</div>
+    <div style="text-align: center; color: #00ff00; margin-bottom: 30px; font-size: 12px;">
+      "Oh No... I have to meet my friends!"
+    </div>
+    <div class="games-grid">
+      <div class="game-card" onclick="startGameMode('fishana')">
+        <div class="game-icon">🐠</div>
+        <div class="game-name">FISHANA</div>
+      </div>
+      <div class="game-card" onclick="startGameMode('npat')">
+        <div class="game-icon">📚</div>
+        <div class="game-name">NAME PLACE ANIMAL</div>
+      </div>
+      <div class="game-card" onclick="startGameMode('charades')">
+        <div class="game-icon">🎭</div>
+        <div class="game-name">CHARADES</div>
+      </div>
+      <div class="game-card" onclick="startGameMode('cars')">
+        <div class="game-icon">🏎️</div>
+        <div class="game-name">CARS</div>
+      </div>
+      <div class="game-card" onclick="startGameMode('character')">
+        <div class="game-icon">👤</div>
+        <div class="game-name">CHARACTER</div>
+      </div>
+      <div class="game-card" onclick="startGameMode('badamsat')">
+        <div class="game-icon">💣</div>
+        <div class="game-name">BADAMSAT</div>
+      </div>
+      <div class="game-card" onclick="startGameMode('bluff')">
+        <div class="game-icon">🎲</div>
+        <div class="game-name">BLUFF</div>
+      </div>
+      <div class="game-card" onclick="startGameMode('ai')">
+        <div class="game-icon">🤖</div>
+        <div class="game-name">FUNNY AI</div>
+      </div>
+      <div class="game-card" onclick="startGameMode('facetalk')">
+        <div class="game-icon">💬</div>
+        <div class="game-name">FACETALK</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <canvas id="game-canvas"></canvas>
+
+  <div class="hud" id="hud" style="display: none;">
+    <div class="player-name" id="player-info">Player: Guest</div>
+    <div class="room-code" id="room-code">Room: XXXX</div>
+    <div style="color: #00aa00; font-size: 8px; margin-top: 5px;">ESC - BACK TO LOBBY</div>
+  </div>
+
+  <!-- Leaderboard -->
+  <div id="leaderboard">
+    <div class="leaderboard-title">⭐ LEADERBOARD ⭐</div>
+    <div class="leaderboard-entry">1. YOU - 1000</div>
+    <div class="leaderboard-entry">2. PLAYER2 - 850</div>
+    <div class="leaderboard-entry">3. PLAYER3 - 720</div>
+    <div class="leaderboard-entry">4. PLAYER4 - 650</div>
+    <div class="leaderboard-entry">5. PLAYER5 - 500</div>
+  </div>
+
+  <!-- Trophy Display -->
+  <div id="trophy-display">
+    <div class="trophy-icon">🏆</div>
+    <div class="trophy-text">YOU ARE CHAMPION!</div>
+    <div style="font-size: 9px; color: #00ff00; margin-top: 5px;">"Keep being awesome!"</div>
+  </div>
+
+  <!-- Room Controls -->
+  <div class="room-controls" id="room-controls">
+    <div style="margin-bottom: 10px; text-shadow: 0 0 10px #00ff00;">ROOM MODE</div>
+    <button class="room-btn" onclick="quickJoin()">QUICK JOIN (J)</button>
+    <button class="room-btn" onclick="createServer()">CREATE SERVER (C)</button>
+    <button class="room-btn" onclick="joinWithCode()">JOIN CODE (CJ)</button>
+  </div>
+
+  <!-- Quick Join Modal -->
+  <div class="modal" id="quickJoinModal">
+    <div class="modal-content">
+      <div class="modal-title">◆ QUICK JOIN ◆</div>
+      <input type="text" class="modal-input" id="joinCode" placeholder="ROOM CODE" maxlength="6">
+      <div style="font-size: 10px; margin: 10px 0;">Finding servers...</div>
+      <button class="modal-btn" onclick="confirmJoin()">JOIN</button>
+      <button class="modal-btn" onclick="closeModal('quickJoinModal')">CANCEL</button>
+    </div>
+  </div>
+
+  <!-- Create Server Modal -->
+  <div class="modal" id="createServerModal">
+    <div class="modal-content">
+      <div class="modal-title">◆ CREATE SERVER ◆</div>
+      <div style="font-size: 12px; margin: 20px 0; text-shadow: 0 0 10px #00ff00;">
+        Room Code: <span id="newRoomCode">XXXX</span>
+      </div>
+      <div style="font-size: 10px; margin: 10px 0;">Waiting for players...</div>
+      <button class="modal-btn" onclick="startWithCode()">START GAME</button>
+      <button class="modal-btn" onclick="closeModal('createServerModal')">CANCEL</button>
+    </div>
+  </div>
+
+  <!-- Join Code Modal -->
+  <div class="modal" id="joinCodeModal">
+    <div class="modal-content">
+      <div class="modal-title">◆ JOIN ROOM ◆</div>
+      <input type="text" class="modal-input" id="codeInput" placeholder="ROOM CODE" maxlength="6">
+      <button class="modal-btn" onclick="confirmJoinCode()">JOIN</button>
+      <button class="modal-btn" onclick="closeModal('joinCodeModal')">CANCEL</button>
+    </div>
+  </div>
+
+  <script>
+    // Game State
+    let gameState = {
+      playerName: '',
+      avatar: '',
+      car: '',
+      roomCode: generateRoomCode(),
+      currentGame: null,
+      selectedAvatar: null,
+      selectedCar: null
+    };
+
+    // Audio (Kenny G Songbird)
+    let audioContext = null;
+    let currentAudio = null;
+
+    function generateRoomCode() {
+      return Math.random().toString(36).substring(2, 8).toUpperCase();
+    }
+
+    function startGame() {
+      document.getElementById('boot').style.display = 'none';
+      document.getElementById('avatar-creator').style.display = 'block';
+    }
+
+    function selectAvatar(element, emoji) {
+      document.querySelectorAll('.avatar-item').forEach(el => el.classList.remove('selected'));
+      element.classList.add('selected');
+      gameState.avatar = emoji;
+      gameState.selectedAvatar = element;
+    }
+
+    function selectCar(element, emoji) {
+      document.querySelectorAll('.car-item').forEach(el => el.classList.remove('selected'));
+      element.classList.add('selected');
+      gameState.car = emoji;
+      gameState.selectedCar = element;
+    }
+
+    function proceedToGame() {
+      const name = document.getElementById('player-name').value.trim();
+
+      if (!name) {
+        alert('Please enter your name!');
+        return;
+      }
+
+      if (!gameState.avatar) {
+        alert('Please choose an avatar!');
+        return;
+      }
+
+      if (!gameState.car) {
+        alert('Please choose a car!');
+        return;
+      }
+
+      gameState.playerName = name;
+
+      // Play Kenny G Songbird audio (if available)
+      playTransitionMusic();
+
+      // Hide avatar creator and show lobby
+      document.getElementById('avatar-creator').style.display = 'none';
+      document.getElementById('lobby').style.display = 'block';
+      document.getElementById('hud').style.display = 'block';
+
+      // Update HUD
+      document.getElementById('player-info').textContent = `${gameState.avatar} ${gameState.playerName}`;
+      document.getElementById('room-code').textContent = `Room: ${gameState.roomCode}`;
+
+      // Animate in
+      animateStartupSequence();
+    }
+
+    function playTransitionMusic() {
+      // Kenny G Songbird would play here
+      // Using the existing MP3 file: 'Kenny G - Songbird (Offiical Video).mp3'
+      const audio = new Audio('Kenny G - Songbird (Offiical Video).mp3');
+      audio.volume = 0.5;
+      audio.play().catch(e => console.log('Audio playback failed:', e));
+    }
+
+    function animateStartupSequence() {
+      // Simulate driving from parking lot to lobby
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let progress = 0;
+      const duration = 3000; // 3 seconds
+      const startTime = Date.now();
+
+      function animate() {
+        const elapsed = Date.now() - startTime;
+        progress = Math.min(elapsed / duration, 1);
+
+        ctx.fillStyle = '#0f0f1e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw simple pixel car
+        ctx.fillStyle = '#00ff00';
+        ctx.fillRect(canvas.width / 2 - 20 + progress * 100, canvas.height / 2 - 10, 40, 20);
+
+        // Draw road
+        ctx.strokeStyle = '#00ff00';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height / 2);
+        ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.stroke();
+
+        // Status text
+        ctx.fillStyle = '#00ff00';
+        ctx.font = '12px Press Start 2P';
+        ctx.fillText('Driving to lobby...', 20, 30);
+        ctx.fillText(`${gameState.avatar} ${gameState.playerName}`, 20, 60);
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          canvas.style.display = 'none';
+          // Show lobby content
+        }
+      }
+
+      animate();
+    }
+
+    function startGameMode(gameName) {
+      gameState.currentGame = gameName;
+
+      // Hide lobby and show game screen
+      document.getElementById('lobby').style.display = 'none';
+
+      const canvas = document.getElementById('game-canvas');
+      canvas.style.display = 'block';
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      // Initialize appropriate game
+      switch(gameName.toLowerCase()) {
+        case 'fishana': initFishana(); break;
+        case 'npat': initNamePlaceAnimal(); break;
+        case 'charades': initCharades(); break;
+        case 'cars': initCarsGame(); break;
+        case 'character': initCharacterGame(); break;
+        case 'badamsat': initBadamsat(); break;
+        case 'bluff': initBluff(); break;
+        case 'ai': initFunnyAI(); break;
+        case 'facetalk': initFaceTalk(); break;
+        default: initDefaultGame();
+      }
+    }
+
+    // ===== FISHANA =====
+    function initFishana() {
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+
+      const fishes = ['🐠', '🐡', '🐟', '🦈', '🐙', '🦑', '🦐', '🦞'];
+      let score = 0;
+      let timer = 30;
+
+      function drawGame() {
+        ctx.fillStyle = '#0f0f1e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#00ff00';
+        ctx.font = 'bold 20px Press Start 2P';
+        ctx.textAlign = 'center';
+        ctx.fillText('FISHANA - TAP FISH!', canvas.width / 2, 40);
+        ctx.font = '14px Press Start 2P';
+        ctx.fillText(`SCORE: ${score} | TIME: ${timer}s`, canvas.width / 2, 80);
+
+        // Draw fish grid
+        const gridSize = 60;
+        const startX = 50;
+        const startY = 120;
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 4; j++) {
+            const x = startX + j * (gridSize + 20);
+            const y = startY + i * (gridSize + 20);
+            const fish = fishes[Math.floor(Math.random() * fishes.length)];
+            ctx.font = '40px Arial';
+            ctx.fillText(fish, x, y);
+          }
+        }
+
+        ctx.fillStyle = '#00aa00';
+        ctx.font = '12px Press Start 2P';
+        ctx.textAlign = 'left';
+        ctx.fillText('Press ESC to exit', 20, canvas.height - 20);
+      }
+
+      const gameInterval = setInterval(() => {
+        timer--;
+        drawGame();
+        if (timer <= 0) {
+          clearInterval(gameInterval);
+          endGame(`FISHANA COMPLETE!\nFinal Score: ${score}`);
+        }
+      }, 1000);
+
+      drawGame();
+
+      // Click handler
+      canvas.onclick = () => {
+        score += Math.floor(Math.random() * 10) + 1;
+        drawGame();
+      };
+    }
+
+    // ===== NAME PLACE ANIMAL THING =====
+    function initNamePlaceAnimal() {
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+
+      const categories = [
+        { name: 'NAME', letter: 'A' },
+        { name: 'PLACE', letter: 'B' },
+        { name: 'ANIMAL', letter: 'C' },
+        { name: 'THING', letter: 'D' }
+      ];
+
+      let roundCount = 1;
+      let playerAnswers = {};
+
+      function drawGame() {
+        ctx.fillStyle = '#0f0f1e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#00ff00';
+        ctx.font = 'bold 20px Press Start 2P';
+        ctx.textAlign = 'center';
+        ctx.fillText('NAME PLACE ANIMAL THING', canvas.width / 2, 40);
+        ctx.font = '14px Press Start 2P';
+        ctx.fillText(`ROUND ${roundCount}/5`, canvas.width / 2, 80);
+
+        let y = 130;
+        categories.forEach((cat, idx) => {
+          ctx.font = '14px Press Start 2P';
+          ctx.fillText(`${cat.name}:`, canvas.width / 2, y);
+          y += 40;
+        });
+
+        ctx.fillStyle = '#00aa00';
+        ctx.font = '12px Press Start 2P';
+        ctx.fillText('Type answers and press ENTER', canvas.width / 2, canvas.height - 40);
+        ctx.fillText('Press ESC to exit', canvas.width / 2, canvas.height - 20);
+      }
+
+      drawGame();
+      roundCount++;
+      if (roundCount > 5) {
+        setTimeout(() => endGame('NAME PLACE ANIMAL THING COMPLETE!'), 2000);
+      }
+    }
+
+    // ===== CHARADES =====
+    function initCharades() {
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+
+      const prompts = [
+        'DANCING ROBOT',
+        'SLIPPERY PENGUIN',
+        'FLYING SUPERHERO',
+        'JUMPING RABBIT',
+        'SLEEPING CAT',
+        'SWIMMING FISH',
+        'CRYING BABY',
+        'ANGRY DINOSAUR'
+      ];
+
+      let currentPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+      let guessed = false;
+
+      function drawGame() {
+        ctx.fillStyle = '#0f0f1e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#00ff00';
+        ctx.font = 'bold 20px Press Start 2P';
+        ctx.textAlign = 'center';
+        ctx.fillText('CHARADES', canvas.width / 2, 40);
+
+        ctx.font = '14px Press Start 2P';
+        ctx.fillText('GUESS THE ACTION!', canvas.width / 2, 100);
+
+        if (!guessed) {
+          ctx.fillStyle = '#00ff00';
+          ctx.font = '48px Arial';
+          ctx.fillText('🎭', canvas.width / 2, 200);
+        }
+
+        ctx.fillStyle = '#00aa00';
+        ctx.font = '12px Press Start 2P';
+        ctx.fillText('Type your guess and press ENTER', canvas.width / 2, canvas.height - 40);
+        ctx.fillText('Press ESC to exit', canvas.width / 2, canvas.height - 20);
+      }
+
+      drawGame();
+
+      document.addEventListener('keydown', function charadesHandler(e) {
+        if (e.key === 'Enter') {
+          guessed = true;
+          drawGame();
+          setTimeout(() => {
+            document.removeEventListener('keydown', charadesHandler);
+            endGame(`CHARADES ROUND COMPLETE!\nAnswer: ${currentPrompt}`);
+          }, 1500);
+        }
+      });
+    }
+
+    // ===== CARS =====
+    function initCarsGame() {
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+
+      let playerX = canvas.width / 2;
+      let playerY = canvas.height - 100;
+      let gameRunning = true;
+      let score = 0;
+
+      function drawGame() {
+        ctx.fillStyle = '#0f0f1e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Road
+        ctx.fillStyle = '#333';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Road lines
+        ctx.strokeStyle = '#00ff00';
+        ctx.lineWidth = 2;
+        for (let i = 0; i < canvas.height; i += 40) {
+          ctx.beginPath();
+          ctx.moveTo(canvas.width / 2, i);
+          ctx.lineTo(canvas.width / 2, i + 20);
+          ctx.stroke();
+        }
+
+        // Draw player car
+        ctx.fillStyle = '#00ff00';
+        ctx.fillRect(playerX - 20, playerY, 40, 30);
+
+        ctx.fillStyle = '#00ff00';
+        ctx.font = 'bold 16px Press Start 2P';
+        ctx.textAlign = 'center';
+        ctx.fillText(`CARS - DODGE!`, canvas.width / 2, 40);
+        ctx.font = '12px Press Start 2P';
+        ctx.fillText(`SCORE: ${score}`, canvas.width / 2, 70);
+
+        ctx.fillStyle = '#00aa00';
+        ctx.font = '12px Press Start 2P';
+        ctx.fillText('Arrow keys to move | ESC to exit', canvas.width / 2, canvas.height - 20);
+      }
+
+      function gameLoop() {
+        drawGame();
+        score += 1;
+        if (gameRunning) {
+          requestAnimationFrame(gameLoop);
+        }
+      }
+
+      document.addEventListener('keydown', function carsHandler(e) {
+        if (e.key === 'ArrowLeft') playerX = Math.max(50, playerX - 20);
+        if (e.key === 'ArrowRight') playerX = Math.min(canvas.width - 50, playerX + 20);
+      });
+
+      gameLoop();
+    }
+
+    // ===== CHARACTER GAME =====
+    function initCharacterGame() {
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+
+      const characters = [
+        '😎', '🤖', '👽', '🎭', '🧟', '👾', '🤡', '👹',
+        '👨‍🎤', '👩‍🎨', '🧙', '🏃', '🤸', '⛹️'
+      ];
+
+      let selectedCharacters = [];
+
+      function drawGame() {
+        ctx.fillStyle = '#0f0f1e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#00ff00';
+        ctx.font = 'bold 20px Press Start 2P';
+        ctx.textAlign = 'center';
+        ctx.fillText('CHARACTER BUILDER', canvas.width / 2, 40);
+
+        ctx.font = '14px Press Start 2P';
+        ctx.fillText('Select your character!', canvas.width / 2, 90);
+
+        let x = 50;
+        let y = 140;
+        let col = 0;
+        characters.forEach((char, idx) => {
+          ctx.font = '36px Arial';
+          ctx.fillText(char, x, y);
+          x += 80;
+          col++;
+          if (col === 6) {
+            col = 0;
+            x = 50;
+            y += 80;
+          }
+        });
+
+        ctx.fillStyle = '#00aa00';
+        ctx.font = '12px Press Start 2P';
+        ctx.fillText('Press ESC to exit', canvas.width / 2, canvas.height - 20);
+      }
+
+      drawGame();
+      setTimeout(() => endGame('CHARACTER SELECTED!'), 3000);
+    }
+
+    // ===== BADAMSAT =====
+    function initBadamsat() {
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+
+      let revealed = 0;
+      let total = 12;
+
+      function drawGame() {
+        ctx.fillStyle = '#0f0f1e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#00ff00';
+        ctx.font = 'bold 20px Press Start 2P';
+        ctx.textAlign = 'center';
+        ctx.fillText('BADAMSAT', canvas.width / 2, 40);
+
+        ctx.font = '14px Press Start 2P';
+        ctx.fillText(`REVEALED: ${revealed}/${total}`, canvas.width / 2, 90);
+
+        // Draw boxes
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 4; j++) {
+            const x = 100 + j * 120;
+            const y = 160 + i * 100;
+            ctx.fillStyle = revealed > i * 4 + j ? '#00aa00' : '#00ff00';
+            ctx.fillRect(x, y, 80, 60);
+            ctx.fillStyle = '#0f0f1e';
+            ctx.font = '30px Arial';
+            if (Math.random() > 0.8) {
+              ctx.fillText('💣', x + 25, y + 45);
+            }
+          }
+        }
+
+        ctx.fillStyle = '#00aa00';
+        ctx.font = '12px Press Start 2P';
+        ctx.fillText('Click boxes to reveal | ESC to exit', canvas.width / 2, canvas.height - 20);
+      }
+
+      drawGame();
+
+      canvas.onclick = () => {
+        revealed++;
+        if (revealed >= total) {
+          setTimeout(() => endGame('BADAMSAT COMPLETE!'), 500);
+        } else {
+          drawGame();
+        }
+      };
+    }
+
+    // ===== BLUFF =====
+    function initBluff() {
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+
+      const truth = Math.random() > 0.5;
+
+      function drawGame() {
+        ctx.fillStyle = '#0f0f1e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#00ff00';
+        ctx.font = 'bold 20px Press Start 2P';
+        ctx.textAlign = 'center';
+        ctx.fillText('BLUFF', canvas.width / 2, 40);
+
+        ctx.font = '16px Press Start 2P';
+        ctx.fillText('Is this TRUE or BLUFF?', canvas.width / 2, 120);
+
+        ctx.font = '14px Press Start 2P';
+        ctx.fillText('A cat has 9 lives!', canvas.width / 2, 200);
+
+        ctx.font = '12px Press Start 2P';
+        ctx.fillText('T - TRUE | B - BLUFF | ESC - EXIT', canvas.width / 2, canvas.height - 20);
+      }
+
+      drawGame();
+
+      document.addEventListener('keydown', function bluffHandler(e) {
+        if (e.key.toUpperCase() === 'T' || e.key.toUpperCase() === 'B') {
+          const correct = (e.key.toUpperCase() === 'T') === truth;
+          document.removeEventListener('keydown', bluffHandler);
+          endGame(correct ? 'CORRECT!' : 'WRONG!');
+        }
+      });
+    }
+
+    // ===== FUNNY AI =====
+    function initFunnyAI() {
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+
+      const responses = [
+        'AI: WHY DID CHICKEN CROSS ROAD?',
+        'AI: BEEP BOOP BEEP!',
+        'AI: I AM LEARNING...',
+        'AI: THAT IS FUNNY!',
+        'AI: ERROR 404: HUMOR NOT FOUND'
+      ];
+
+      let currentResponse = responses[Math.floor(Math.random() * responses.length)];
+
+      function drawGame() {
+        ctx.fillStyle = '#0f0f1e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#00ff00';
+        ctx.font = 'bold 20px Press Start 2P';
+        ctx.textAlign = 'center';
+        ctx.fillText('FUNNY AI', canvas.width / 2, 40);
+
+        ctx.font = '16px Press Start 2P';
+        ctx.fillText(currentResponse, canvas.width / 2, 150);
+
+        ctx.font = '36px Arial';
+        ctx.fillText('🤖', canvas.width / 2, 250);
+
+        ctx.fillStyle = '#00aa00';
+        ctx.font = '12px Press Start 2P';
+        ctx.fillText('Type your joke! Press ENTER | ESC to exit', canvas.width / 2, canvas.height - 20);
+      }
+
+      drawGame();
+      setTimeout(() => endGame('AI LAUGHED!'), 3000);
+    }
+
+    // ===== FACETALK =====
+    function initFaceTalk() {
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+
+      const emotions = ['😂', '😍', '😡', '🤔', '😴'];
+      let currentEmotion = emotions[Math.floor(Math.random() * emotions.length)];
+
+      function drawGame() {
+        ctx.fillStyle = '#0f0f1e';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#00ff00';
+        ctx.font = 'bold 20px Press Start 2P';
+        ctx.textAlign = 'center';
+        ctx.fillText('FACETALK', canvas.width / 2, 40);
+
+        ctx.font = '16px Press Start 2P';
+        ctx.fillText('Match the emotion!', canvas.width / 2, 120);
+
+        ctx.font = '80px Arial';
+        ctx.fillText(currentEmotion, canvas.width / 2 - 40, 220);
+
+        ctx.fillStyle = '#00aa00';
+        ctx.font = '12px Press Start 2P';
+        ctx.fillText('Make the same face! Press ESC to exit', canvas.width / 2, canvas.height - 20);
+      }
+
+      drawGame();
+      setTimeout(() => endGame('EMOTION MATCHED!'), 3000);
+    }
+
+    // ===== DEFAULT GAME =====
+    function initDefaultGame() {
+      const canvas = document.getElementById('game-canvas');
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#0f0f1e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#00ff00';
+      ctx.font = '24px Press Start 2P';
+      ctx.textAlign = 'center';
+      ctx.fillText('GAME LOADING...', canvas.width / 2, canvas.height / 2);
+      ctx.font = '12px Press Start 2P';
+      ctx.fillText('Press ESC to return to lobby', canvas.width / 2, canvas.height / 2 + 50);
+
+      setTimeout(() => endGame('Game ended!'), 2000);
+    }
+
+    function endGame(message) {
+      document.getElementById('game-canvas').style.display = 'none';
+      document.getElementById('lobby').style.display = 'block';
+      gameState.currentGame = null;
+
+      // Reset canvas onclick
+      document.getElementById('game-canvas').onclick = null;
+    }
+
+    // ===== ROOM & MODAL FUNCTIONS =====
+    function openModal(modalId) {
+      document.getElementById(modalId).style.display = 'grid';
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    function quickJoin() {
+      openModal('quickJoinModal');
+    }
+
+    function createServer() {
+      const newCode = generateRoomCode();
+      document.getElementById('newRoomCode').textContent = newCode;
+      gameState.roomCode = newCode;
+      openModal('createServerModal');
+    }
+
+    function joinWithCode() {
+      openModal('joinCodeModal');
+    }
+
+    function confirmJoin() {
+      const code = document.getElementById('joinCode').value.trim();
+      if (code.length === 6) {
+        gameState.roomCode = code;
+        closeModal('quickJoinModal');
+        // Show success message
+        alert(`Joined room: ${code}`);
+      } else {
+        alert('Please enter a valid room code (6 characters)');
+      }
+    }
+
+    function confirmJoinCode() {
+      const code = document.getElementById('codeInput').value.trim();
+      if (code.length === 6) {
+        gameState.roomCode = code;
+        closeModal('joinCodeModal');
+        alert(`Joined room: ${code}`);
+      } else {
+        alert('Please enter a valid room code (6 characters)');
+      }
+    }
+
+    function startWithCode() {
+      closeModal('createServerModal');
+      alert('Server created! Waiting for players...');
+    }
+
+    function updateLeaderboard() {
+      const lb = document.getElementById('leaderboard');
+      if (lb.style.display === 'none') {
+        lb.style.display = 'block';
+      }
+    }
+
+    function showTrophy() {
+      const trophy = document.getElementById('trophy-display');
+      if (trophy.style.display === 'none') {
+        trophy.style.display = 'block';
+        setTimeout(() => {
+          trophy.style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    function toggleRoomControls() {
+      const controls = document.getElementById('room-controls');
+      controls.style.display = controls.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Keyboard shortcuts
+    let keyBuffer = '';
+    document.addEventListener('keydown', (e) => {
+      keyBuffer += e.key.toUpperCase();
+      if (keyBuffer.length > 2) keyBuffer = keyBuffer.slice(-2);
+
+      if (e.key === 'j' || e.key === 'J') {
+        quickJoin();
+      }
+      if (e.key === 'c' || e.key === 'C') {
+        if (keyBuffer === 'CJ') {
+          joinWithCode();
+          keyBuffer = '';
+        } else {
+          createServer();
+        }
+      }
+      if (e.key === 'Escape') {
+        // Close modals
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        keyBuffer = '';
+
+        if (gameState.currentGame) {
+          gameState.currentGame = null;
+          document.getElementById('game-canvas').style.display = 'none';
+          document.getElementById('lobby').style.display = 'block';
+        }
+      }
+
+      // Reset buffer after 500ms
+      setTimeout(() => { if (keyBuffer === 'C') keyBuffer = ''; }, 500);
+    });
+
+    // Window resize
+    window.addEventListener('resize', () => {
+      const canvas = document.getElementById('game-canvas');
+      if (canvas.style.display !== 'none') {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+    });
+  </script>
+</body>
+</html>
