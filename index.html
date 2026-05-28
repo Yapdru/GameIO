@@ -194,18 +194,18 @@
   <!-- Results Screen -->
   <div id="results" class="screen">
     <div class="glass wide">
-      <h1>🏆 Game Complete!</h1>
-      <p id="sloganMsg" class="sub" style="font-size: 20px; margin: 16px;">Great game!</p>
+      <h1 style="font-size: 2.5em;">🏆 GAME COMPLETE! 🏆</h1>
+      <p id="sloganMsg" class="sub" style="font-size: 24px; margin: 16px; color: #078ed8; font-weight: 1000;">Great game!</p>
 
       <canvas id="confettiCanvas" width="1000" height="180"></canvas>
 
-      <h2>Leaderboard</h2>
-      <div id="winnerBoard" style="display: grid; gap: 8px;"></div>
+      <h2 style="margin-top: 20px;">👑 FINAL LEADERBOARD 👑</h2>
+      <div id="winnerBoard" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 20px 0;"></div>
 
-      <div class="row">
-        <button class="btn" data-go="landing">Home</button>
-        <button class="btn primary" id="nextGame">Next Game</button>
-        <button class="btn primary" id="finishBtn">Finish Series</button>
+      <div class="row" style="margin-top: 30px;">
+        <button class="btn" data-go="landing">🏠 Home</button>
+        <button class="btn primary" id="nextGame">⏭️ Next Game</button>
+        <button class="btn primary" id="finishBtn">🎬 End Series</button>
       </div>
     </div>
   </div>
