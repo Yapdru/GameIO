@@ -3,104 +3,11 @@
 
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 import { gameState } from './state.js';
+import { Avatar } from './three-avatar.js';
+import { CameraManager } from './three-camera.js';
 
-export class ThreeAvatar {
-  constructor(face = '😎', body = '🧥', accessory = '⚡') {
-    this.group = new THREE.Group();
-    this.face = face;
-    this.body = body;
-    this.accessory = accessory;
-
-    this.buildGeometry();
-    this.position = new THREE.Vector3(0, 0, 0);
-    this.velocity = new THREE.Vector3(0, 0, 0);
-    this.animTime = 0;
-    this.state = 'idle'; // idle, walk, jump
-  }
-
-  buildGeometry() {
-    // Head (sphere)
-    const headGeom = new THREE.SphereGeometry(0.3, 16, 16);
-    const headMat = new THREE.MeshStandardMaterial({ color: 0xffdbac, roughness: 0.4 });
-    const head = new THREE.Mesh(headGeom, headMat);
-    head.position.y = 0.6;
-    head.castShadow = true;
-    head.receiveShadow = true;
-    this.group.add(head);
-
-    // Body (cylinder/capsule)
-    const bodyGeom = new THREE.CapsuleGeometry(0.2, 0.6, 8, 8);
-    const bodyMat = new THREE.MeshStandardMaterial({ color: 0x4287f5, roughness: 0.3 });
-    const body = new THREE.Mesh(bodyGeom, bodyMat);
-    body.position.y = 0.2;
-    body.castShadow = true;
-    body.receiveShadow = true;
-    this.group.add(body);
-
-    // Left leg (capsule)
-    const legGeom = new THREE.CapsuleGeometry(0.1, 0.5, 8, 8);
-    const legMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.5 });
-    const leftLeg = new THREE.Mesh(legGeom, legMat);
-    leftLeg.position.set(-0.15, -0.3, 0);
-    leftLeg.castShadow = true;
-    leftLeg.receiveShadow = true;
-    this.group.add(leftLeg);
-    this.leftLeg = leftLeg;
-
-    // Right leg (capsule)
-    const rightLeg = new THREE.Mesh(legGeom, legMat);
-    rightLeg.position.set(0.15, -0.3, 0);
-    rightLeg.castShadow = true;
-    rightLeg.receiveShadow = true;
-    this.group.add(rightLeg);
-    this.rightLeg = rightLeg;
-
-    // Shadow beneath feet
-    const shadowGeom = new THREE.PlaneGeometry(0.5, 0.25);
-    const shadowMat = new THREE.MeshStandardMaterial({
-      color: 0x000000,
-      transparent: true,
-      opacity: 0.3,
-      emissive: 0x000000
-    });
-    const shadow = new THREE.Mesh(shadowGeom, shadowMat);
-    shadow.rotation.x = -Math.PI / 2;
-    shadow.position.y = 0.01;
-    this.group.add(shadow);
-  }
-
-  update(dt) {
-    this.animTime += dt;
-
-    // Idle animation - head bob
-    if (this.state === 'idle') {
-      this.group.children[0].position.y = 0.6 + Math.sin(this.animTime * 2) * 0.05;
-    }
-    // Walk animation - legs swing
-    else if (this.state === 'walk') {
-      const speed = 4;
-      this.leftLeg.rotation.z = Math.sin(this.animTime * speed) * 0.3;
-      this.rightLeg.rotation.z = Math.sin(this.animTime * speed + Math.PI) * 0.3;
-      this.group.children[0].position.y = 0.6 + Math.sin(this.animTime * 2) * 0.08;
-    }
-  }
-
-  setPosition(x, y, z) {
-    this.group.position.set(x, y, z);
-    this.position.set(x, y, z);
-  }
-
-  setVelocity(vx, vz) {
-    this.velocity.set(vx, 0, vz);
-    if (Math.abs(vx) > 0.1 || Math.abs(vz) > 0.1) {
-      this.state = 'walk';
-      // Face direction of movement
-      this.group.rotation.y = Math.atan2(vx, vz);
-    } else {
-      this.state = 'idle';
-    }
-  }
-}
+// Use the enhanced Avatar class from three-avatar.js
+export { Avatar as ThreeAvatar };
 
 export class ThreeWorld {
   constructor(canvas, gameData = null) {
@@ -117,7 +24,7 @@ export class ThreeWorld {
     // Camera with chase view
     this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 0.1, 1000);
     this.camera.position.set(0, 3, 8);
-    this.cameraTarget = new THREE.Vector3(0, 1.5, 0);
+    this.cameraManager = new CameraManager(this.camera);
 
     // Renderer
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -303,7 +210,7 @@ export class ThreeWorld {
     players.forEach(p => {
       if (p.id !== gameState.playerId) {
         if (!this.remoteAvatars[p.id]) {
-          const avatar = new ThreeAvatar(p.avatar?.face || '😎', p.avatar?.body || '🧥');
+          const avatar = new Avatar(p.avatar?.face || '😎', p.avatar?.body || '🧥', p.avatar?.acc || '⚡');
           this.scene.add(avatar.group);
           this.remoteAvatars[p.id] = avatar;
         }
@@ -332,7 +239,7 @@ export class ThreeWorld {
 
     // Create player avatar
     const avatar = gameState.playerAvatar;
-    this.playerAvatar = new ThreeAvatar(avatar?.face || '😎', avatar?.body || '🧥', avatar?.acc || '⚡');
+    this.playerAvatar = new Avatar(avatar?.face || '😎', avatar?.body || '🧥', avatar?.acc || '⚡');
     this.scene.add(this.playerAvatar.group);
     this.playerAvatar.setPosition(0, 0, 0);
 
@@ -367,6 +274,8 @@ export class ThreeWorld {
     if (this.keys['a'] || this.keys['arrowleft']) dx -= moveSpeed;
     if (this.keys['d'] || this.keys['arrowright']) dx += moveSpeed;
 
+    // Update velocity for animation
+    this.playerAvatar.velocity.set(dx, 0, dz);
     this.playerAvatar.setVelocity(dx, dz);
 
     // Update position
@@ -401,20 +310,9 @@ export class ThreeWorld {
     if (!this.playerAvatar) return;
 
     const playerPos = this.playerAvatar.group.position;
+    const playerVel = this.playerAvatar.velocity;
 
-    // Chase camera: follow player with offset
-    const chaseDist = 8;
-    const chaseHeight = 3;
-
-    const cameraTarget = new THREE.Vector3(
-      playerPos.x,
-      playerPos.y + chaseHeight,
-      playerPos.z
-    );
-
-    // Smooth camera follow
-    this.camera.position.lerp(cameraTarget.clone().add(new THREE.Vector3(0, 0, chaseDist)), dt * 2);
-    this.camera.lookAt(cameraTarget);
+    this.cameraManager.update(dt, playerPos, playerVel);
   }
 
   frameLoop = () => {
