@@ -11,6 +11,7 @@ import { JoinScreen } from './screens/join.js';
 import { LobbyScreen } from './screens/lobby.js';
 import { Lobby3DScreen } from './screens/lobby-3d.js';
 import { GameScreen } from './screens/game.js';
+import { ResultsScreen } from './screens/results.js';
 
 // Register all screens
 screenManager.register('start', StartScreen);
@@ -20,6 +21,7 @@ screenManager.register('join', JoinScreen);
 screenManager.register('lobby', Lobby3DScreen); // Use 3D lobby
 screenManager.register('lobby-2d', LobbyScreen); // Keep 2D as fallback
 screenManager.register('game', GameScreen);
+screenManager.register('results', ResultsScreen);
 
 // Start the app
 async function init() {

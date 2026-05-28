@@ -345,6 +345,7 @@ export class GameScreen extends Screen {
       });
     }
 
-    screenManager.show('lobby');
+    // Show results screen
+    screenManager.show('results');
   }
 }
