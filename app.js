@@ -4,6 +4,7 @@
 import { GAMES, DEFAULT_GAME_ORDER, AVATAR_CONFIG } from './game-data.js';
 import { Avatar, renderAvatarPicker } from './avatars.js';
 import { createRoom, joinRoom, getRoom, OfflineRoom } from './firebase.js';
+import { Fishana } from './games/fishana.js';
 
 class GameIO {
   constructor() {
@@ -326,14 +327,59 @@ class GameIO {
     }
 
     this.showScreen('game');
+
     setTimeout(() => {
-      // Placeholder: Each game will replace this
       const gameKey = this.selectedGames[this.currentGameIdx];
-      const score = Math.floor(Math.random() * GAMES[gameKey].maxScore);
-      this.scores[gameKey] = score;
-      this.currentGameIdx++;
-      this.playNextGame();
-    }, 2000);
+      const canvas = document.getElementById('gameCanvas');
+      const scoreDisplay = document.getElementById('score');
+
+      let gameInstance = null;
+
+      // Create game instance
+      if (gameKey === 'fishana') {
+        gameInstance = new Fishana(canvas, (score) => {
+          scoreDisplay.textContent = score;
+        });
+      }
+      // TODO: Add other games here (cars, badaam, space, obby, quiz, math)
+
+      if (!gameInstance) {
+        // Placeholder if game not implemented
+        this.scores[gameKey] = 0;
+        this.currentGameIdx++;
+        setTimeout(() => this.playNextGame(), 500);
+        return;
+      }
+
+      // Game loop
+      let lastTime = Date.now();
+      let isRunning = true;
+
+      const gameLoop = () => {
+        const now = Date.now();
+        const dt = now - lastTime;
+        lastTime = now;
+
+        // Update game
+        const cont = gameInstance.update(dt);
+
+        // Draw game
+        gameInstance.draw();
+
+        if (cont) {
+          requestAnimationFrame(gameLoop);
+        } else {
+          // Game over
+          isRunning = false;
+          const result = gameInstance.getResult();
+          this.scores[gameKey] = result.score || 0;
+          this.currentGameIdx++;
+          setTimeout(() => this.playNextGame(), 800);
+        }
+      };
+
+      gameLoop();
+    }, 300);
   }
 }
 
