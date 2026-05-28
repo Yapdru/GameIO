@@ -79,6 +79,20 @@ export class Lobby3DScreen extends Screen {
 
     // Initialize 3D lobby
     this.lobby3d = new ThreeLobby(canvas);
+
+    // Handle portal entry - only for host
+    this.lastPortalEntry = null;
+    this.lobby3d.onPortalEnter = (portal) => {
+      if (!gameState.isHost) return;
+
+      // Prevent rapid re-triggering
+      const now = Date.now();
+      if (this.lastPortalEntry && now - this.lastPortalEntry < 1000) return;
+
+      this.lastPortalEntry = now;
+      this.launchGame(portal.key);
+    };
+
     this.lobby3d.start();
 
     // Host game selector
@@ -90,6 +104,15 @@ export class Lobby3DScreen extends Screen {
 
     // Handle window resize
     window.addEventListener('resize', () => this.handleResize());
+  }
+
+  async launchGame(gameKey) {
+    gameState.currentGame = gameKey;
+    await firebase.updateRoom(gameState.roomCode, {
+      currentGame: gameKey,
+      startedAt: Date.now()
+    });
+    screenManager.show('game');
   }
 
   showGameSelector() {
@@ -123,12 +146,7 @@ export class Lobby3DScreen extends Screen {
         <div style="font-size: 12px; color: #888">${game.description}</div>
       `;
       btn.onclick = async () => {
-        gameState.currentGame = key;
-        await firebase.updateRoom(gameState.roomCode, {
-          currentGame: key,
-          startedAt: Date.now()
-        });
-        screenManager.show('game');
+        await this.launchGame(key);
       };
       gameGrid.appendChild(btn);
     });

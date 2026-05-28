@@ -106,59 +106,106 @@ export class ThreeLobby {
     platform.receiveShadow = true;
     this.scene.add(platform);
 
-    // Game portals
+    // Game portals - all 7 games
     this.portals = [];
-    const gameNames = ['Fishana', 'Cars', 'Badaam'];
-    const colors = [0x00d4ff, 0xff6b6b, 0xffd84d];
+    const gameData = [
+      { name: 'Fishana', key: 'fishana', color: 0x00d4ff, icon: '🐟' },
+      { name: 'Cars', key: 'cars', color: 0xff6b6b, icon: '🏎️' },
+      { name: 'Badaam', key: 'badaam', color: 0xffd84d, icon: '🃏' },
+      { name: 'Space', key: 'space', color: 0x9b59b6, icon: '🚀' },
+      { name: 'Obby', key: 'obby', color: 0xe74c3c, icon: '🧗' },
+      { name: 'Quiz', key: 'quiz', color: 0x3498db, icon: '🧠' },
+      { name: 'Math', key: 'mathdash', color: 0x2ecc71, icon: '🔢' }
+    ];
 
-    for (let i = 0; i < gameNames.length; i++) {
-      const angle = (i / gameNames.length) * Math.PI * 2 + Math.PI / 2;
-      const x = Math.cos(angle) * 10;
-      const z = Math.sin(angle) * 10;
+    for (let i = 0; i < gameData.length; i++) {
+      const game = gameData[i];
+      const angle = (i / gameData.length) * Math.PI * 2;
+      const x = Math.cos(angle) * 12;
+      const z = Math.sin(angle) * 12;
 
       const portalGroup = new THREE.Group();
       portalGroup.position.set(x, 0, z);
 
-      // Portal arch
+      // Portal base (glowing cylinder)
+      const baseMat = new THREE.MeshStandardMaterial({
+        color: game.color,
+        emissive: game.color,
+        emissiveIntensity: 0.5,
+        metalness: 0.8,
+        roughness: 0.2
+      });
+      const base = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.8, 0.8, 0.1, 32),
+        baseMat
+      );
+      base.position.y = 0.05;
+      base.castShadow = true;
+      portalGroup.add(base);
+
+      // Portal arch (torus)
       const archMat = new THREE.MeshStandardMaterial({
-        color: colors[i],
-        emissive: colors[i],
-        emissiveIntensity: 0.3,
-        metalness: 0.6,
+        color: game.color,
+        emissive: game.color,
+        emissiveIntensity: 0.4,
+        metalness: 0.7,
         roughness: 0.3
       });
       const arch = new THREE.Mesh(
-        new THREE.TorusGeometry(1.5, 0.15, 16, 32, 0, Math.PI),
+        new THREE.TorusGeometry(1.2, 0.12, 16, 32, 0, Math.PI),
         archMat
       );
       arch.rotation.z = Math.PI / 2;
-      arch.position.y = 1.5;
+      arch.position.y = 1.4;
       arch.castShadow = true;
       portalGroup.add(arch);
 
-      // Portal label (text rendered to canvas)
+      // Portal label with emoji and name
       const canvas = document.createElement('canvas');
       canvas.width = 256;
-      canvas.height = 128;
+      canvas.height = 160;
       const ctx = canvas.getContext('2d');
       ctx.fillStyle = '#fff';
-      ctx.font = 'bold 32px system-ui';
+      ctx.font = 'bold 40px system-ui';
       ctx.textAlign = 'center';
-      ctx.fillText(gameNames[i], 128, 64);
+      ctx.fillText(game.icon, 128, 50);
+      ctx.font = 'bold 28px system-ui';
+      ctx.fillText(game.name, 128, 95);
+      ctx.font = '14px system-ui';
+      ctx.fillStyle = '#ccc';
+      ctx.fillText('Walk in to play', 128, 120);
 
       const texture = new THREE.CanvasTexture(canvas);
       const labelMat = new THREE.MeshBasicMaterial({ map: texture });
       const label = new THREE.Mesh(
-        new THREE.PlaneGeometry(2, 1),
+        new THREE.PlaneGeometry(2, 1.2),
         labelMat
       );
-      label.position.y = 0.5;
+      label.position.y = 0.8;
       portalGroup.add(label);
+
+      // Particle ring (simple animated ring)
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: game.color,
+        transparent: true,
+        opacity: 0.6
+      });
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(1.5, 0.08, 8, 24),
+        ringMat
+      );
+      ring.rotation.x = Math.PI / 4;
+      ring.position.y = 0.5;
+      portalGroup.add(ring);
 
       this.portals.push({
         group: portalGroup,
-        name: gameNames[i],
-        position: new THREE.Vector3(x, 0, z)
+        name: game.name,
+        key: game.key,
+        position: new THREE.Vector3(x, 0, z),
+        nearDistance: 2.5,
+        ring: ring,
+        label: label
       });
 
       this.scene.add(portalGroup);
@@ -280,10 +327,37 @@ export class ThreeLobby {
 
     // Animate portals
     const time = this.clock.getElapsedTime();
-    this.portals.forEach(portal => {
-      portal.group.children[0].rotation.z += 0.01;
-      portal.group.children[0].scale.x = 1 + Math.sin(time * 2) * 0.1;
+    this.portals.forEach((portal, idx) => {
+      const arch = portal.group.children.find(c => c.geometry && c.geometry.type === 'TorusGeometry' && c.position.y > 1);
+      if (arch) {
+        arch.rotation.z += 0.01;
+        arch.scale.x = 1 + Math.sin(time * 2 + idx) * 0.1;
+      }
+
+      // Animate ring
+      if (portal.ring) {
+        portal.ring.rotation.x += 0.02;
+        portal.ring.rotation.y += 0.01;
+      }
+
+      // Check distance and update label opacity
+      const playerDist = this.playerPos.distanceTo(portal.position);
+      if (portal.label) {
+        const isNear = playerDist < portal.nearDistance;
+        portal.label.material.opacity = isNear ? 1 : 0.7;
+        if (isNear) {
+          portal.label.scale.lerp(new THREE.Vector3(1.1, 1.1, 1.1), 0.1);
+        } else {
+          portal.label.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+        }
+      }
     });
+
+    // Check for portal entry
+    const nearPortal = this.getPortalAtPosition(this.portals);
+    if (nearPortal && this.onPortalEnter) {
+      this.onPortalEnter(nearPortal);
+    }
   }
 
   draw() {
@@ -308,11 +382,11 @@ export class ThreeLobby {
     this.renderer.setSize(width, height);
   }
 
-  getPortalAtPosition(maxDist = 2) {
-    for (const portal of this.portals) {
+  getPortalAtPosition(portals = this.portals, maxDist = 2) {
+    for (const portal of portals) {
       const dist = this.playerPos.distanceTo(portal.position);
       if (dist < maxDist) {
-        return portal.name;
+        return portal;
       }
     }
     return null;
