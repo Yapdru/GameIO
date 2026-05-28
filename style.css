@@ -38,8 +38,28 @@ html, body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-10px); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 /* Buttons */
@@ -53,15 +73,28 @@ button {
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
+  outline: none;
 }
 
 button:hover {
   background: #ffeb3b;
   transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(15, 143, 232, 0.3);
 }
 
 button:active {
   transform: scale(0.95);
+}
+
+button:focus {
+  outline: 3px solid #0f8fe8;
+  outline-offset: 2px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
 button.secondary {
