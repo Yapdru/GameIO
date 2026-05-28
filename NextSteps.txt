@@ -120,26 +120,37 @@ Use for GameIO: if adding 3D, make it stylized and performant.
 Lesson: Room code, friends, turns, scoring, and replay are powerful even with simple visuals.
 Use for GameIO: multiplayer lobby and round flow.
 
-6. Pokémon Showdown — https://pokemonshowdown.com
-Lesson: Strong multiplayer structure can matter more than graphics.
-Use for GameIO: rooms, battles/games, replay, score history.
+6. Krunker — https://krunker.io
+Lesson: Fast browser multiplayer depends on quick loading, readable controls, and immediate action.
+Use for GameIO: keep input latency low and avoid heavy assets.
 
-7. CrazyGames Multiplayer — https://www.crazygames.com/t/multiplayer
-Lesson: Browser games need fast loading and simple entry.
-Use for GameIO: no heavy startup; make games easy to launch.
+7. Bonk.io — https://bonk.io
+Lesson: Simple physics, rooms, and social chaos can be fun without advanced graphics.
+Use for GameIO: Obby or arena modes can be simple but replayable.
 
-8. Smash Karts — https://smashkarts.io
+8. Gartic Phone — https://garticphone.com
+Lesson: Rounds, social reactions, and funny outcomes create replayability.
+Use for GameIO: winner screens and round transitions should be fun and shareable.
+
+9. Little Big Snake — https://littlebigsnake.com
+Lesson: Evolution and progression make simple movement games deeper.
+Use for Fishana Evolution: visible growth stages and rewards.
+
+10. Smash Karts — https://smashkarts.io
 Lesson: Short, readable, stylized multiplayer driving can be more fun than realistic simulation.
-Use for GameIO Cars: arcade driving, quick matches, visible scoring.
+Use for Cars / Drift: arcade steering, boosts, short rounds, clear scoring.
 
-9. Bloxd.io — https://bloxd.io
-Lesson: Browser multiplayer can have multiple modes and a simple shared-world feel.
-Use for GameIO: lobby plus multiple game worlds.
-
-10. Forza Horizon — https://forza.net
-Lesson: use only experience-design ideas like camera weight, lighting, reveal moments, and pacing.
-Do not copy Forza visuals, cars, maps, music, UI, or branding.
-Use for GameIO: polished transitions, not fake realism.
+Extra design lessons:
+- Every game needs a 3-second explanation.
+- Every game needs visible score.
+- Every game needs a clear end condition.
+- Every game needs Back to Lobby.
+- Multiplayer should sync only important data: players, scores, current game, round state.
+- Keep assets small for iPad and browser.
+- Start with 2D/canvas games first.
+- Add 3D lobby later only if the gameplay loop already works.
+- Stylized graphics are better than broken realism.
+- GameIO must feel like many games connected by one lobby.
 
 Acceptance criteria:
 1. Create room works.
