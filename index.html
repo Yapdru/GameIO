@@ -1,1 +1,215 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GAMEIO VER 11 PRO</title><style>html,body{margin:0;height:100%;overflow:hidden;background:#dffaff;font-family:system-ui;font-weight:900}#threeMount{position:fixed;inset:0}.hud{position:fixed;top:12px;left:12px;z-index:9;background:rgba(255,255,255,.9);border:1px solid #65e6ff;border-radius:18px;padding:12px;color:#12304a}.hud b{font-size:22px}.row{position:fixed;bottom:14px;left:14px;right:14px;z-index:9;display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #65e6ff;border-radius:14px;background:#ffd84d;color:#12304a;padding:12px 14px;font:inherit;font-weight:1000}.blue{background:#dffaff}.boot{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:#dffaff;color:#12304a;font-size:42px;transition:.5s}.hide{opacity:0;pointer-events:none}</style></head><body><div id="boot" class="boot">GAMEIO<br>VER 11 PRO ⚡<br><small>Simulated in India</small></div><div id="threeMount"></div><div class="hud"><b>GAMEIO VER 11 PRO</b><br>Forza-detail target active</div><div class="row"><button id="cars" class="btn">Start Drive</button><button id="lobby" class="btn blue">Lobby Reveal</button><button id="fish" class="btn blue">Fishana</button></div><script type="module">const v=await import('./v8-3d.js');v.startV8(document.getElementById('threeMount'));setTimeout(()=>boot.classList.add('hide'),1200);cars.onclick=()=>window.GameIO3D.api.cars();lobby.onclick=()=>window.GameIO3D.api.lobby();fish.onclick=()=>window.GameIO3D.api.fishana();</script></body></html>
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GAMEIO - Press Start</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Boot Screen with Lightning -->
+  <div id="boot" class="boot">
+    <div class="bootContent">
+      <div class="lightningBg"></div>
+      <div class="bootLogo">GAME<span>IO</span></div>
+      <div class="bootRing"></div>
+      <div class="bootText">⚡ PRESS START ⚡</div>
+      <small class="bootSubtext">Multiplayer Gaming Arena</small>
+    </div>
+  </div>
+
+  <!-- Landing Page -->
+  <div id="landing" class="screen on">
+    <div class="glass hero wide">
+      <div class="logo">GAME<span>IO</span> <span style="font-size: .5em; background: transparent; color: #078ed8;">⚡</span></div>
+      <p class="sub">Join millions in real-time multiplayer gaming</p>
+      <div class="lightningDecor"></div>
+
+      <div class="modesGrid">
+        <button class="modeCard quickJoin" data-go="join">
+          <div class="modeIcon">⚡</div>
+          <div class="modeName">Quick Join</div>
+          <small>Jump into a game instantly</small>
+        </button>
+        <button class="modeCard createServer" data-go="create">
+          <div class="modeIcon">🌟</div>
+          <div class="modeName">Create Server</div>
+          <small>Host your own game room</small>
+        </button>
+        <button class="modeCard joinCode" data-go="joinCode">
+          <div class="modeIcon">🔑</div>
+          <div class="modeName">Join Code</div>
+          <small>Enter room code</small>
+        </button>
+      </div>
+
+      <div class="row">
+        <button class="btn" id="aboutBtn">About Games</button>
+        <button class="btn primary" id="settingsBtn">Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Avatar Creator -->
+  <div id="avatarCreator" class="screen">
+    <div class="glass wide">
+      <h1>Create Your Avatar</h1>
+      <div class="avatarStage">
+        <div class="avatar3d"><span id="avatarPreview">😎🧊⚡</span><em>✨</em></div>
+        <div class="avatarShadow"></div>
+      </div>
+
+      <div class="avatarSection">
+        <h3>Face</h3>
+        <div class="avatarGrid" id="hostAvatarGrid"></div>
+      </div>
+
+      <input type="text" id="hostName" placeholder="Enter your name" style="margin: 16px auto;">
+
+      <div class="row">
+        <button class="btn" data-go="landing">Back</button>
+        <button class="btn primary" id="continueCreate">Continue to Games</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Room -->
+  <div id="create" class="screen">
+    <div class="glass wide">
+      <h1>🌟 Create Your Game Room</h1>
+      <p>Select games for your playlist</p>
+
+      <div class="presets">
+        <button class="btn" id="presetFamily">👨‍👩‍👧 Family Pack</button>
+        <button class="btn" id="presetRace">🏎️ Racing Series</button>
+        <button class="btn" id="presetSocial">👥 Social Games</button>
+        <button class="btn" id="presetMega">🎮 Mega Mix</button>
+        <button class="btn danger" id="clearOrder">Clear All</button>
+      </div>
+
+      <div class="gameGrid" id="gameGrid"></div>
+
+      <div class="orderBar" id="selectedOrder"></div>
+
+      <div class="row">
+        <button class="btn" data-go="landing">Back</button>
+        <button class="btn primary" id="createRoom">Create Room</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Join Room with Code -->
+  <div id="joinCode" class="screen">
+    <div class="glass">
+      <h1>🔑 Join Game Room</h1>
+      <input type="text" id="joinCode" placeholder="Enter room code (e.g., GAME123)" maxlength="8" style="font-size: 20px; letter-spacing: 2px;">
+      <input type="text" id="joinName" placeholder="Your name">
+
+      <div class="avatarSection">
+        <h3>Pick Your Avatar</h3>
+        <div class="avatar3d"><span id="joinAvatarPreview">😎🧊⚡</span><em>✨</em></div>
+        <div class="avatarGrid" id="joinAvatarGrid"></div>
+      </div>
+
+      <div class="row">
+        <button class="btn" data-go="landing">Back</button>
+        <button class="btn primary" id="joinRoom">Join Room</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lobby -->
+  <div id="lobby" class="screen">
+    <div class="glass wide">
+      <h1>🎮 Game Lobby</h1>
+      <div class="roomCode" id="roomCode" title="Click to copy">----</div>
+      <p id="roomInfo" class="tiny"></p>
+
+      <div class="lobbyPreview">
+        <canvas id="lobbyCanvas" width="1000" height="340"></canvas>
+      </div>
+
+      <div id="elevatorFloors"></div>
+
+      <h3>Players in Room</h3>
+      <div class="players" id="players"></div>
+
+      <div class="row">
+        <button class="btn" data-go="landing">Leave</button>
+        <button class="btn" id="addBot">Add Bot</button>
+        <button class="btn primary" id="startGame">Start Game</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="play" class="screen playScreen">
+    <div class="gameShell">
+      <div class="hud">
+        <span id="gameTitle">Game</span>
+        <span><span id="modeLabel">Mode</span> <span class="badge" id="scoreLabel">Score 0</span></span>
+        <span><span id="lapLabel">Lap</span> <span class="badge" id="evolveLabel">Evolution</span></span>
+        <span id="cameraLabel">Camera</span>
+      </div>
+      <canvas id="gameCanvas"></canvas>
+      <canvas id="miniMap" width="240" height="180" style="width: 240px; height: 180px;"></canvas>
+      <canvas id="confettiCanvas" width="1920" height="180"></canvas>
+
+      <div id="cardTable" class="hidden"></div>
+      <div id="quizPanel" class="hidden"></div>
+
+      <div class="controls">
+        <button class="btn miniBtn" id="camBtn">📷 Camera</button>
+        <button class="btn miniBtn" id="fpsBtn">📊 FPS</button>
+        <div id="fpsBox" class="fpsBox hidden">FPS: 60</div>
+        <button class="btn miniBtn" id="mapBtn">🗺️ Map</button>
+        <button class="btn miniBtn" id="evolveBtn">🧬 Evolve</button>
+        <button class="btn miniBtn" id="chatBtn">💬 Chat</button>
+        <button class="btn miniBtn" id="fullBtn">⛶ Full</button>
+      </div>
+
+      <div class="touchPad" id="touchPad">
+        <div class="stick">👆</div>
+      </div>
+
+      <button class="btn" style="position: absolute; bottom: 130px; left: 12px;" id="boostBtn">⚡ Boost</button>
+      <button class="btn danger" style="position: absolute; bottom: 130px; left: 110px;" id="brakeBtn">🛑 Brake</button>
+
+      <div id="chatPanel" class="chatPanel hidden">
+        <div class="chatLog" id="chatLog"></div>
+        <div class="chatActions">
+          <button data-msg="GG!">GG!</button>
+          <button data-msg="Nice!">Nice!</button>
+          <button data-msg="Oops">Oops</button>
+          <button data-msg="😂">😂</button>
+        </div>
+        <div style="display: flex; gap: 6px;">
+          <input type="text" id="chatInput" placeholder="Message..." style="flex: 1; margin: 6px;">
+          <button class="btn miniBtn" id="sendChat">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Screen -->
+  <div id="results" class="screen">
+    <div class="glass wide">
+      <h1>🏆 Game Complete!</h1>
+      <p id="sloganMsg" class="sub" style="font-size: 20px; margin: 16px;">Great game!</p>
+
+      <canvas id="confettiCanvas" width="1000" height="180"></canvas>
+
+      <h2>Leaderboard</h2>
+      <div id="winnerBoard" style="display: grid; gap: 8px;"></div>
+
+      <div class="row">
+        <button class="btn" data-go="landing">Home</button>
+        <button class="btn primary" id="nextGame">Next Game</button>
+        <button class="btn primary" id="finishBtn">Finish Series</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
