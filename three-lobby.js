@@ -25,7 +25,7 @@ export class ThreeLobby {
     this.renderer.setPixelRatio(window.devicePixelRatio || 1);
     this.renderer.shadowMap.enabled = true;
 
-    // Lighting
+    // Lighting - cinematic setup
     const hemisLight = new THREE.HemisphereLight(0x87ceeb, 0x1a5f7a, 0.7);
     this.scene.add(hemisLight);
 
@@ -34,7 +34,14 @@ export class ThreeLobby {
     sunLight.castShadow = true;
     sunLight.shadow.mapSize.width = 512;
     sunLight.shadow.mapSize.height = 512;
+    sunLight.shadow.camera.left = -30;
+    sunLight.shadow.camera.right = 30;
+    sunLight.shadow.camera.top = 30;
+    sunLight.shadow.camera.bottom = -30;
     this.scene.add(sunLight);
+
+    // Portal-specific point lights for cinematic glow
+    this.portalLights = [];
 
     // Build lobby scene
     this.buildScene();
@@ -45,6 +52,13 @@ export class ThreeLobby {
     this.input = { left: false, right: false, forward: false, backward: false };
     this.playerPos = new THREE.Vector3(0, 0, 0);
     this.playerAngle = 0;
+
+    // Cinematic state
+    this.cinematicMode = false;
+    this.cameraTarget = null;
+    this.cameraTransitionTime = 0;
+    this.screenShake = 0;
+    this.screenShakeIntensity = 0;
 
     // Animation
     this.clock = new THREE.Clock();
@@ -198,6 +212,12 @@ export class ThreeLobby {
       ring.position.y = 0.5;
       portalGroup.add(ring);
 
+      // Portal light for cinematic glow
+      const portalLight = new THREE.PointLight(game.color, 1.5, 15);
+      portalLight.position.set(x, 1.5, z);
+      this.scene.add(portalLight);
+      this.portalLights.push(portalLight);
+
       this.portals.push({
         group: portalGroup,
         name: game.name,
@@ -205,7 +225,8 @@ export class ThreeLobby {
         position: new THREE.Vector3(x, 0, z),
         nearDistance: 2.5,
         ring: ring,
-        label: label
+        label: label,
+        light: portalLight
       });
 
       this.scene.add(portalGroup);
@@ -325,7 +346,7 @@ export class ThreeLobby {
       this.playerPos.z
     );
 
-    // Animate portals
+    // Animate portals with cinematic lighting
     const time = this.clock.getElapsedTime();
     this.portals.forEach((portal, idx) => {
       const arch = portal.group.children.find(c => c.geometry && c.geometry.type === 'TorusGeometry' && c.position.y > 1);
@@ -338,6 +359,11 @@ export class ThreeLobby {
       if (portal.ring) {
         portal.ring.rotation.x += 0.02;
         portal.ring.rotation.y += 0.01;
+      }
+
+      // Cinematic light pulsing
+      if (portal.light) {
+        portal.light.intensity = 1.5 + Math.sin(time * 2 + idx * 0.5) * 0.5;
       }
 
       // Check distance and update label opacity
@@ -353,10 +379,60 @@ export class ThreeLobby {
       }
     });
 
+    // Apply cinematic effects
+    this.applyCinematicEffects(dt);
+
     // Check for portal entry
     const nearPortal = this.getPortalAtPosition(this.portals);
     if (nearPortal && this.onPortalEnter) {
+      this.triggerScreenShake(0.3, 0.2);
       this.onPortalEnter(nearPortal);
+    }
+  }
+
+  triggerScreenShake(intensity = 0.5, duration = 0.3) {
+    this.screenShake = duration;
+    this.screenShakeIntensity = intensity;
+  }
+
+  setCinematicCamera(position, target, duration = 1.5) {
+    this.cinematicMode = true;
+    this.cameraTarget = { position, target };
+    this.cameraTransitionTime = duration;
+  }
+
+  applyCinematicEffects(dt) {
+    // Handle screen shake
+    if (this.screenShake > 0) {
+      this.screenShake -= dt;
+      const intensity = (this.screenShake / 0.3) * this.screenShakeIntensity;
+      const shakeX = (Math.random() - 0.5) * intensity;
+      const shakeY = (Math.random() - 0.5) * intensity;
+      this.camera.position.x += shakeX;
+      this.camera.position.y += shakeY;
+    }
+
+    // Handle cinematic camera transition
+    if (this.cinematicMode && this.cameraTarget) {
+      this.cameraTransitionTime -= dt;
+      const progress = 1 - (this.cameraTransitionTime / 1.5);
+      const eased = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+
+      if (eased >= 1) {
+        this.cinematicMode = false;
+      }
+
+      // Smooth interpolation
+      const lerpAlpha = Math.min(eased, 1);
+      const startPos = new THREE.Vector3(
+        this.playerPos.x - Math.sin(this.playerAngle) * 5,
+        2,
+        this.playerPos.z - Math.cos(this.playerAngle) * 5
+      );
+      this.camera.position.lerp(
+        this.cameraTarget.position.clone().multiplyScalar(1 - lerpAlpha).add(startPos.multiplyScalar(lerpAlpha)),
+        lerpAlpha
+      );
     }
   }
 

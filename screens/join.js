@@ -55,7 +55,7 @@ export class JoinScreen extends Screen {
         joinedAt: Date.now()
       });
 
-      screenManager.show('lobby');
+      screenManager.show('arrival'); // Show cinematic arrival before lobby
     };
 
     const backBtn = this.createElement('button', 'secondary', 'Back');

@@ -41,7 +41,7 @@ export class SetupScreen extends Screen {
     createBtn.onclick = () => {
       gameState.setPlayerName(nameInput.value);
       gameState.createRoom();
-      screenManager.show('lobby');
+      screenManager.show('arrival'); // Show cinematic arrival before lobby
     };
 
     const joinBtn = this.createElement('button', 'secondary', 'Join Game');

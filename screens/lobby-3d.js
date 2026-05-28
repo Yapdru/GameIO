@@ -5,6 +5,7 @@ import { gameState } from '../state.js';
 import { firebase } from '../firebase.js';
 import { GAMES } from '../config.js';
 import { ThreeLobby } from '../three-lobby.js';
+import { audioSystem } from '../audio-system.js';
 
 export class Lobby3DScreen extends Screen {
   constructor() {
@@ -90,6 +91,7 @@ export class Lobby3DScreen extends Screen {
       if (this.lastPortalEntry && now - this.lastPortalEntry < 1000) return;
 
       this.lastPortalEntry = now;
+      audioSystem.playSFX('portal-enter');
       this.launchGame(portal.key);
     };
 
@@ -162,6 +164,10 @@ export class Lobby3DScreen extends Screen {
   }
 
   onShow() {
+    // Initialize audio
+    audioSystem.initialize();
+    audioSystem.playLobbyAmbience();
+
     // Sync room state
     this.syncRoom();
     this.pollInterval = setInterval(() => this.syncRoom(), 500);
@@ -174,6 +180,10 @@ export class Lobby3DScreen extends Screen {
     if (this.pollInterval) {
       clearInterval(this.pollInterval);
     }
+
+    // Stop ambient music
+    audioSystem.stopSound('ambience');
+    audioSystem.playGameStartJingle();
   }
 
   async syncRoom() {

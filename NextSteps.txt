@@ -189,5 +189,60 @@ Acceptance criteria:
 10. 3D lobby, if added, supports the game loop instead of replacing it.
 11. GameIO still feels like many games in one multiplayer arcade universe.
 
+Example websites / references (continued):
+
+21. Krunker — https://krunker.io
+Lesson: Fast browser multiplayer works when loading is quick, controls are immediate, and the game starts fast.
+Use for GameIO: keep controls responsive and avoid heavy assets.
+
+22. Bonk.io — https://bonk.io
+Lesson: Simple physics and social chaos can be fun without advanced graphics.
+Use for GameIO: Obby/arena games can be simple but still funny and replayable.
+
+23. Gartic Phone — https://garticphone.com
+Lesson: Rounds, social reactions, and funny outcomes create replayability.
+Use for GameIO: winner screens and round transitions should be fun and shareable.
+
+24. Little Big Snake — https://littlebigsnake.com
+Lesson: Evolution and progression make simple movement games deeper.
+Use for GameIO: Fishana Evolution should have visible growth stages and rewards.
+
+25. Paper.io — https://paper-io.com
+Lesson: Simple movement plus territory/objective creates fast competition.
+Use for GameIO: future zone-capture mini-game idea.
+
+26. TETR.IO — https://tetr.io
+Lesson: Polished UI and responsive controls matter more than heavy visuals.
+Use for GameIO: menus, scoreboards, and controls should feel crisp.
+
+27. Wordle — https://www.nytimes.com/games/wordle/index.html
+Lesson: A simple daily challenge can keep players coming back.
+Use for GameIO: optional daily challenge mode.
+
+28. Fall Guys — https://www.fallguys.com
+Lesson: Obstacle games work when goals are readable, rounds are short, and failure is funny.
+Use for GameIO: Obby Run should be bright, quick, and chaotic.
+
+29. Mario Kart — https://mariokart8.nintendo.com
+Lesson: Arcade racing is fun because of readable tracks, boost moments, and simple handling.
+Use for GameIO Cars: focus on fun steering and boosts, not realistic simulation.
+
+30. Roblox — https://www.roblox.com
+Lesson: A hub of many experiences works when avatars, social presence, and game portals are connected.
+Use for GameIO: one lobby, many games, friends visible, simple entry.
+
+Extra design lessons:
+
+* Every game needs a 3-second explanation.
+* Every game needs visible score.
+* Every game needs a clear end condition.
+* Every game needs "Back to Lobby."
+* Multiplayer should sync only important data: players, scores, current game, round state.
+* Keep assets small for iPad/browser.
+* Start with 2D/canvas games first.
+* Add 3D lobby later only if the gameplay loop already works.
+* Stylized graphics are better than broken realism.
+* GameIO must feel like many games connected by one lobby.
+
 Final principle:
 Gameplay first. Multiplayer first. Clean structure first. 3D and polish later.

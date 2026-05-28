@@ -10,6 +10,7 @@ import { SetupScreen } from './screens/setup.js';
 import { JoinScreen } from './screens/join.js';
 import { LobbyScreen } from './screens/lobby.js';
 import { Lobby3DScreen } from './screens/lobby-3d.js';
+import { ArrivalScreen } from './screens/arrival.js';
 import { GameScreen } from './screens/game.js';
 import { ResultsScreen } from './screens/results.js';
 
@@ -18,6 +19,7 @@ screenManager.register('start', StartScreen);
 screenManager.register('avatar', AvatarScreen);
 screenManager.register('setup', SetupScreen);
 screenManager.register('join', JoinScreen);
+screenManager.register('arrival', ArrivalScreen); // Optional cinematic intro
 screenManager.register('lobby', Lobby3DScreen); // Use 3D lobby
 screenManager.register('lobby-2d', LobbyScreen); // Keep 2D as fallback
 screenManager.register('game', GameScreen);
