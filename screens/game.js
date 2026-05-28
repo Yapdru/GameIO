@@ -88,11 +88,12 @@ export class GameScreen extends Screen {
 
     // Load and build the game-specific world
     try {
-      const worldModule = await import(`../worlds/${gameKey}-world.js`);
-      const worldData = worldModule[`build${gameKey.charAt(0).toUpperCase() + gameKey.slice(1)}World`](this.game.scene);
-      this.game.worldData = worldData;
+      const success = await this.game.loadGameWorld(gameKey);
+      if (!success) {
+        console.warn(`Could not load world for ${gameKey}`);
+      }
     } catch (e) {
-      console.warn(`Could not load world for ${gameKey}:`, e);
+      console.error(`Error loading world for ${gameKey}:`, e);
     }
   }
 

@@ -5,6 +5,8 @@ import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 import { gameState } from './state.js';
 import { Avatar } from './three-avatar.js';
 import { CameraManager } from './three-camera.js';
+import { WorldManager } from './three-worlds.js';
+import { PerformanceMonitor } from './three-performance.js';
 
 // Use the enhanced Avatar class from three-avatar.js
 export { Avatar as ThreeAvatar };
@@ -40,7 +42,10 @@ export class ThreeWorld {
     this.playerAvatar = null;
     this.remoteAvatars = {};
     this.portals = [];
-    this.gameWorld = null;
+    this.worldManager = new WorldManager(this.scene);
+
+    // Performance monitoring
+    this.perfMonitor = new PerformanceMonitor(this.renderer);
 
     // Input state
     this.keys = {};
@@ -247,8 +252,13 @@ export class ThreeWorld {
     this.frameLoop();
   }
 
+  async loadGameWorld(gameKey) {
+    return await this.worldManager.loadWorld(gameKey);
+  }
+
   stop() {
     this.isRunning = false;
+    this.worldManager.dispose();
     if (this.renderer) {
       this.renderer.dispose();
     }
@@ -322,8 +332,17 @@ export class ThreeWorld {
 
     this.update(dt);
     this.updateCamera(dt);
+    this.worldManager.update(dt);
 
     this.renderer.render(this.scene, this.camera);
+
+    // Performance monitoring
+    this.perfMonitor.update();
+
+    // Periodic logging
+    if (this.frameCount % 300 === 0) {
+      this.perfMonitor.log();
+    }
 
     this.frameCount++;
     requestAnimationFrame(this.frameLoop);
