@@ -1,5 +1,6 @@
-// Fishana Evolution - first playable game
-// Simple 2D Canvas game with swimming, pearls, and evolution
+// Fishana Evolution - Authentic evolution-based fishing game
+// Eat food to grow, evolve into stronger forms, avoid predators
+// Mechanic: Growth → Evolution → New Abilities → Survival
 
 import { gameState } from '../state.js';
 
@@ -10,29 +11,40 @@ export class FishanaGame {
     this.width = canvas.width;
     this.height = canvas.height;
 
-    // Player (fish)
+    // Player fish with evolution system
     this.fish = {
       x: this.width / 2,
       y: this.height / 2,
-      width: 30,
-      height: 20,
+      width: 20,
+      height: 15,
       vx: 0,
       vy: 0,
       angle: 0,
-      speed: 3,
-      maxSpeed: 5
+      speed: 2.5,
+      maxSpeed: 4,
+      size: 1,           // Evolution multiplier
+      level: 0,          // Evolution level (0, 1, 2, 3)
+      foodEaten: 0,      // Counter to next level
+      foodNeeded: 15     // Food to reach next level
     };
 
-    // Pearls to collect
-    this.pearls = [];
-    this.spawnPearls(5);
+    // Food particles (pearls, smaller food)
+    this.food = [];
+    this.spawnFood(8);
+
+    // Predator fish (get harder as player evolves)
+    this.predators = [];
+    this.spawnPredators(1);
+
+    // Powerups
+    this.powerups = [];
+    this.spawnPowerups(1);
 
     // Game state
     this.score = 0;
-    this.time = 0;
-    this.evolutionLevel = 0;
     this.gameTime = 0;
     this.startTime = Date.now();
+    this.gameDuration = 120; // 2 minutes
 
     // Controls
     this.keys = {};
@@ -53,14 +65,63 @@ export class FishanaGame {
     });
   }
 
-  spawnPearls(count) {
+  spawnFood(count) {
     for (let i = 0; i < count; i++) {
-      this.pearls.push({
+      this.food.push({
         x: Math.random() * (this.width - 40) + 20,
         y: Math.random() * (this.height - 40) + 20,
-        radius: 5,
-        collected: false
+        radius: 3 + Math.random() * 2,
+        value: 10 + Math.random() * 5,
+        type: Math.random() > 0.7 ? 'pearl' : 'food'
       });
+    }
+  }
+
+  spawnPredators(count) {
+    for (let i = 0; i < count; i++) {
+      const size = 1 + Math.floor(this.fish.level / 2);
+      this.predators.push({
+        x: Math.random() * this.width,
+        y: Math.random() * this.height,
+        width: 25 * size,
+        height: 18 * size,
+        vx: (Math.random() - 0.5) * 2,
+        vy: (Math.random() - 0.5) * 2,
+        speed: 1.5 + size * 0.3,
+        size: size,
+        chasing: false,
+        huntTimer: 0
+      });
+    }
+  }
+
+  spawnPowerups(count) {
+    for (let i = 0; i < count; i++) {
+      this.powerups.push({
+        x: Math.random() * (this.width - 40) + 20,
+        y: Math.random() * (this.height - 40) + 20,
+        radius: 6,
+        type: Math.random() > 0.5 ? 'speed' : 'shield',
+        duration: 5000 // 5 seconds
+      });
+    }
+  }
+
+  checkEvolution() {
+    // Every 15 food eaten, evolve
+    if (this.fish.foodEaten >= this.fish.foodNeeded) {
+      this.fish.level++;
+      this.fish.foodEaten = 0;
+      this.fish.size = 1 + this.fish.level * 0.3;
+      this.fish.maxSpeed = 4 + this.fish.level * 0.5;
+
+      // Spawn harder predators as you evolve
+      if (this.fish.level % 2 === 0 && this.predators.length < 3) {
+        this.spawnPredators(1);
+      }
+
+      // Score bonus for evolution
+      this.score += 500 * this.fish.level;
     }
   }
 
@@ -78,34 +139,34 @@ export class FishanaGame {
   }
 
   update() {
-    // Time tracking
     this.gameTime = (Date.now() - this.startTime) / 1000;
 
-    // Input handling
-    const input = { left: false, right: false, up: false, down: false };
-    if (this.keys['ArrowLeft'] || this.keys['a']) input.left = true;
-    if (this.keys['ArrowRight'] || this.keys['d']) input.right = true;
-    if (this.keys['ArrowUp'] || this.keys['w']) input.up = true;
-    if (this.keys['ArrowDown'] || this.keys['s']) input.down = true;
+    // Check game end
+    if (this.gameTime > this.gameDuration) {
+      this.isRunning = false;
+      return;
+    }
 
-    // Fish movement
-    if (input.up) this.fish.vy = Math.max(this.fish.vy - 0.3, -this.fish.maxSpeed);
-    if (input.down) this.fish.vy = Math.min(this.fish.vy + 0.3, this.fish.maxSpeed);
-    if (input.left) this.fish.vx = Math.max(this.fish.vx - 0.3, -this.fish.maxSpeed);
-    if (input.right) this.fish.vx = Math.min(this.fish.vx + 0.3, this.fish.maxSpeed);
+    // Player movement
+    let moveX = 0, moveY = 0;
 
-    // Friction
-    this.fish.vx *= 0.95;
-    this.fish.vy *= 0.95;
+    if (this.keys['ArrowUp'] || this.keys['w']) moveY = -1;
+    if (this.keys['ArrowDown'] || this.keys['s']) moveY = 1;
+    if (this.keys['ArrowLeft'] || this.keys['a']) moveX = -1;
+    if (this.keys['ArrowRight'] || this.keys['d']) moveX = 1;
 
-    // Position update
+    if (moveX !== 0 || moveY !== 0) {
+      const len = Math.sqrt(moveX * moveX + moveY * moveY);
+      this.fish.vx = (moveX / len) * this.fish.maxSpeed;
+      this.fish.vy = (moveY / len) * this.fish.maxSpeed;
+      this.fish.angle = Math.atan2(this.fish.vy, this.fish.vx);
+    } else {
+      this.fish.vx *= 0.95;
+      this.fish.vy *= 0.95;
+    }
+
     this.fish.x += this.fish.vx;
     this.fish.y += this.fish.vy;
-
-    // Angle toward movement
-    if (this.fish.vx !== 0 || this.fish.vy !== 0) {
-      this.fish.angle = Math.atan2(this.fish.vy, this.fish.vx);
-    }
 
     // Boundary wrapping
     if (this.fish.x < 0) this.fish.x = this.width;
@@ -113,104 +174,207 @@ export class FishanaGame {
     if (this.fish.y < 0) this.fish.y = this.height;
     if (this.fish.y > this.height) this.fish.y = 0;
 
-    // Pearl collection
-    this.pearls.forEach(pearl => {
-      if (!pearl.collected) {
-        const dx = this.fish.x - pearl.x;
-        const dy = this.fish.y - pearl.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+    // Food collection
+    this.food = this.food.filter(f => {
+      const dx = this.fish.x - f.x;
+      const dy = this.fish.y - f.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < this.fish.width) {
-          pearl.collected = true;
-          this.score += 10;
-          this.evolutionLevel = Math.floor(this.score / 50);
+      if (dist < this.fish.width / 2 + f.radius) {
+        this.fish.foodEaten++;
+        this.score += Math.floor(f.value * (1 + this.fish.level * 0.2));
+        if (f.type === 'pearl') this.score += 50;
+        return false;
+      }
+      return true;
+    });
+
+    // Respawn food
+    if (this.food.length < 5) {
+      this.spawnFood(1);
+    }
+
+    // Check evolution
+    this.checkEvolution();
+
+    // Predator AI
+    this.predators.forEach(pred => {
+      const dx = this.fish.x - pred.x;
+      const dy = this.fish.y - pred.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      // Hunt if close and player is smaller
+      if (dist < 150 && this.fish.level < pred.size) {
+        pred.chasing = true;
+        pred.huntTimer = 30;
+      }
+
+      if (pred.huntTimer > 0) {
+        const angle = Math.atan2(dy, dx);
+        pred.vx = Math.cos(angle) * pred.speed;
+        pred.vy = Math.sin(angle) * pred.speed;
+        pred.huntTimer--;
+      } else {
+        pred.chasing = false;
+        // Random wandering
+        if (Math.random() < 0.01) {
+          pred.vx = (Math.random() - 0.5) * 2;
+          pred.vy = (Math.random() - 0.5) * 2;
         }
+      }
+
+      pred.x += pred.vx;
+      pred.y += pred.vy;
+
+      // Boundary wrapping
+      if (pred.x < 0) pred.x = this.width;
+      if (pred.x > this.width) pred.x = 0;
+      if (pred.y < 0) pred.y = this.height;
+      if (pred.y > this.height) pred.y = 0;
+
+      // Collision - game over if eaten
+      if (dist < this.fish.width + pred.width) {
+        this.isRunning = false;
       }
     });
 
-    // Respawn collected pearls
-    if (this.pearls.filter(p => !p.collected).length === 0) {
-      this.pearls.forEach(p => p.collected = false);
+    // Powerup collection
+    this.powerups = this.powerups.filter(p => {
+      const dx = this.fish.x - p.x;
+      const dy = this.fish.y - p.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < this.fish.width + p.radius) {
+        if (p.type === 'speed') {
+          this.fish.maxSpeed *= 1.5;
+          setTimeout(() => {
+            this.fish.maxSpeed /= 1.5;
+          }, p.duration);
+        } else if (p.type === 'shield') {
+          // Temporarily invisible to predators
+          this.fish.shield = true;
+          setTimeout(() => {
+            this.fish.shield = false;
+          }, p.duration);
+        }
+        this.score += 100;
+        return false;
+      }
+      return true;
+    });
+
+    // Respawn powerups
+    if (this.powerups.length < 1 && Math.random() < 0.005) {
+      this.spawnPowerups(1);
     }
   }
 
   draw() {
-    // Clear canvas with ocean gradient
+    // Ocean background
     const gradient = this.ctx.createLinearGradient(0, 0, 0, this.height);
-    gradient.addColorStop(0, '#1e90ff');
-    gradient.addColorStop(1, '#000080');
+    gradient.addColorStop(0, '#1a7a8a');
+    gradient.addColorStop(1, '#0a4a5a');
     this.ctx.fillStyle = gradient;
     this.ctx.fillRect(0, 0, this.width, this.height);
 
-    // Draw bubbles (animation)
-    const bubbleCount = Math.floor(this.gameTime * 2) % 10;
-    for (let i = 0; i < bubbleCount; i++) {
-      const x = (i * 50 + this.gameTime * 20) % this.width;
-      const y = Math.sin(this.gameTime + i) * 30 + this.height / 2;
-      this.ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+    // Bubbles
+    for (let i = 0; i < 20; i++) {
+      const x = (i * 47 + this.gameTime * 10) % this.width;
+      const y = (i * 63 + this.gameTime * 20) % this.height;
+      this.ctx.fillStyle = 'rgba(100, 200, 255, 0.3)';
       this.ctx.beginPath();
       this.ctx.arc(x, y, 3, 0, Math.PI * 2);
       this.ctx.fill();
     }
 
-    // Draw pearls
-    this.pearls.forEach(pearl => {
-      if (!pearl.collected) {
-        const glow = Math.sin(this.gameTime * 3) * 2 + 5;
-        this.ctx.fillStyle = 'rgba(255, 215, 0, 0.8)';
+    // Draw food
+    this.food.forEach(f => {
+      if (f.type === 'pearl') {
+        this.ctx.fillStyle = '#ffffff';
+        const glow = Math.sin(this.gameTime * 3) * 2;
         this.ctx.beginPath();
-        this.ctx.arc(pearl.x, pearl.y, pearl.radius + glow, 0, Math.PI * 2);
+        this.ctx.arc(f.x, f.y, f.radius + glow, 0, Math.PI * 2);
         this.ctx.fill();
-
-        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      } else {
+        this.ctx.fillStyle = '#ffdd00';
         this.ctx.beginPath();
-        this.ctx.arc(pearl.x, pearl.y, pearl.radius, 0, Math.PI * 2);
+        this.ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2);
         this.ctx.fill();
       }
     });
 
-    // Draw fish
+    // Draw powerups
+    this.powerups.forEach(p => {
+      if (p.type === 'speed') {
+        this.ctx.fillStyle = '#ff6b9d';
+      } else {
+        this.ctx.fillStyle = '#4287f5';
+      }
+      this.ctx.beginPath();
+      this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      this.ctx.fill();
+    });
+
+    // Draw predators
+    this.predators.forEach(pred => {
+      this.ctx.fillStyle = pred.chasing ? '#ff3333' : '#cc3333';
+      this.ctx.save();
+      this.ctx.translate(pred.x, pred.y);
+      this.ctx.rotate(Math.atan2(pred.vy, pred.vx));
+      this.ctx.fillRect(-pred.width / 2, -pred.height / 2, pred.width, pred.height);
+      this.ctx.restore();
+    });
+
+    // Draw player fish
+    const alpha = this.fish.shield ? 0.5 : 1;
+    this.ctx.globalAlpha = alpha;
+    this.ctx.fillStyle = `hsl(${150 + this.fish.level * 20}, 80%, 50%)`;
     this.ctx.save();
     this.ctx.translate(this.fish.x, this.fish.y);
     this.ctx.rotate(this.fish.angle);
 
-    // Fish body
-    this.ctx.fillStyle = '#FF6B6B';
+    // Fish body (grows with evolution)
+    const w = this.fish.width * this.fish.size;
+    const h = this.fish.height * this.fish.size;
     this.ctx.beginPath();
-    this.ctx.ellipse(0, 0, this.fish.width, this.fish.height, 0, 0, Math.PI * 2);
-    this.ctx.fill();
-
-    // Fish eye
-    this.ctx.fillStyle = 'white';
-    this.ctx.beginPath();
-    this.ctx.arc(10, -5, 3, 0, Math.PI * 2);
+    this.ctx.ellipse(0, 0, w, h, 0, 0, Math.PI * 2);
     this.ctx.fill();
 
     // Fish tail
-    this.ctx.fillStyle = '#FF8E8E';
+    this.ctx.fillStyle = `hsl(${150 + this.fish.level * 20}, 90%, 40%)`;
     this.ctx.beginPath();
-    this.ctx.moveTo(-this.fish.width, 0);
-    this.ctx.lineTo(-this.fish.width - 15, -8);
-    this.ctx.lineTo(-this.fish.width - 15, 8);
+    this.ctx.moveTo(w / 2, h / 2);
+    this.ctx.lineTo(w, 0);
+    this.ctx.lineTo(w / 2, -h / 2);
     this.ctx.closePath();
     this.ctx.fill();
 
     this.ctx.restore();
+    this.ctx.globalAlpha = 1;
 
-    // Draw HUD
+    // HUD
     this.ctx.fillStyle = 'white';
-    this.ctx.font = '16px system-ui';
-    this.ctx.fillText(`Score: ${this.score}`, 10, 25);
-    this.ctx.fillText(`Level: ${this.evolutionLevel}`, 10, 45);
-    this.ctx.fillText(`Time: ${Math.floor(this.gameTime)}s`, 10, 65);
-    this.ctx.fillText(`Pearls: ${this.pearls.filter(p => !p.collected).length}`, 10, 85);
+    this.ctx.font = 'bold 18px system-ui';
+    this.ctx.fillText(`Score: ${Math.floor(this.score)}`, 10, 25);
+    this.ctx.fillText(`Level: ${this.fish.level}`, 10, 50);
+    this.ctx.fillText(`Food: ${this.fish.foodEaten}/${this.fish.foodNeeded}`, 10, 75);
+    this.ctx.fillText(`Time: ${Math.floor(this.gameTime)}s`, 10, 100);
 
-    // Draw evolution indicator
-    this.ctx.fillStyle = 'rgba(255, 215, 0, 0.5)';
-    const evolutionWidth = (this.score % 50) / 50 * 100;
-    this.ctx.fillRect(10, this.height - 25, evolutionWidth, 15);
+    // Evolution bar
+    const barWidth = 200;
+    const barHeight = 10;
     this.ctx.strokeStyle = 'white';
-    this.ctx.strokeRect(10, this.height - 25, 100, 15);
+    this.ctx.strokeRect(10, 110, barWidth, barHeight);
+    this.ctx.fillStyle = '#00ff00';
+    const fillWidth = (this.fish.foodEaten / this.fish.foodNeeded) * barWidth;
+    this.ctx.fillRect(10, 110, fillWidth, barHeight);
+
+    // Game timer
+    const timeLeft = this.gameDuration - this.gameTime;
+    this.ctx.fillStyle = timeLeft < 10 ? '#ff6b6b' : 'white';
+    this.ctx.textAlign = 'right';
+    this.ctx.fillText(`${Math.ceil(timeLeft)}s left`, this.width - 10, 25);
+    this.ctx.textAlign = 'left';
   }
 
   loop = () => {
