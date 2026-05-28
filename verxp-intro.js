@@ -1,0 +1,5 @@
+const words=['G4MEI0','GXMEIO','GAM3IO','GAME10','GAMEIO'];
+let i=0;
+function sound(){try{const A=new AudioContext();const o=A.createOscillator();const g=A.createGain();o.type='sawtooth';o.frequency.value=48;g.gain.value=.05;o.connect(g);g.connect(A.destination);o.start();o.frequency.exponentialRampToValueAtTime(95,A.currentTime+1.2);g.gain.exponentialRampToValueAtTime(.001,A.currentTime+1.6);o.stop(A.currentTime+1.7)}catch(e){}}
+function intro(){const d=document.createElement('div');d.id='verxpIntro';d.innerHTML='<div class="xpCar"></div><div class="xpTitle">GAMEIO</div><div class="xpSub">VER XP ⚡</div><div class="xpIndia">Simulated in India</div><button class="xpStart">START ENGINE</button>';document.body.appendChild(d);const title=d.querySelector('.xpTitle');const btn=d.querySelector('.xpStart');const timer=setInterval(()=>{title.textContent=words[i++%words.length]},90);setTimeout(()=>{clearInterval(timer);title.textContent='GAMEIO'},1500);btn.onclick=()=>{sound();d.classList.add('gone');setTimeout(()=>d.remove(),900)}}
+setTimeout(intro,350);
