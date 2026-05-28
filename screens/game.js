@@ -4,6 +4,7 @@ import { Screen, screenManager } from '../screens.js';
 import { gameState } from '../state.js';
 import { firebase } from '../firebase.js';
 import { FishanaGame } from '../games/fishana.js';
+import { CarsGame } from '../games/cars.js';
 
 export class GameScreen extends Screen {
   constructor() {
@@ -68,6 +69,9 @@ export class GameScreen extends Screen {
 
     if (gameKey === 'fishana') {
       this.game = new FishanaGame(canvas);
+      this.game.start();
+    } else if (gameKey === 'cars') {
+      this.game = new CarsGame(canvas);
       this.game.start();
     } else {
       // Placeholder for other games
