@@ -1,5 +1,5 @@
 export const GAME_DATA = {
-  hub:{icon:'🏠',name:'GameIO Social Hub',code:['HUB'],mode:'hub',world:'hub'},
+  hub:{icon:'🏠',name:'GameIO Social Hub',code:['HUB'],mode:'hub',world:'hub',desc:'Chill in the lobby, chat with friends, and prep for games'},
   fishana:{icon:'🎣',name:'Fishana Evolution',code:['FISH','FIN','BUB','WAVE'],mode:'world',world:'ocean'},
   cars:{icon:'🏎️',name:'Cars Horizon Sim',code:['CAR','RACE','DRFT'],mode:'world',world:'road'},
   rally:{icon:'🚙',name:'Rally Mud Run',code:['RALLY','MUD'],mode:'world',world:'rally'},
