@@ -1,42 +1,67 @@
-// Obby Run - Jump through obstacles
+// Obby Run - Jump platforms, reach the finish
 export class Obby {
   constructor(canvas, onScore) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.onScore = onScore;
 
+    // Game settings
+    this.maxTime = 45000; // 45 seconds
+    this.gameTime = 0;
+    this.score = 0;
+
+    // Player
     this.player = {
       x: canvas.width / 2,
       y: canvas.height - 100,
       width: 25,
       height: 35,
       vy: 0,
-      jumping: false
+      jumping: false,
+      maxJump: -12,
+      gravity: 0.5
     };
 
+    // Platforms
     this.platforms = [];
+    this.generatePlatforms();
+
+    // Obstacles
     this.obstacles = [];
-    this.score = 0;
-    this.gameTime = 0;
-    this.maxTime = 45000;
-    this.platformsCleared = 0;
+    this.platforOffset = 0;
 
-    this.gravity = 0.4;
+    // Controls
     this.keys = {};
-
-    window.addEventListener('keydown', e => { this.keys[e.key] = true; });
-    window.addEventListener('keyup', e => { this.keys[e.key] = false; });
-
-    this.generateLevel();
+    this.setupControls();
   }
 
-  generateLevel() {
-    // Create platforms
+  setupControls() {
+    window.addEventListener('keydown', (e) => {
+      this.keys[e.key.toLowerCase()] = true;
+      if ((e.key.toLowerCase() === 'arrowup' || e.key.toLowerCase() === 'w' || e.key === ' ') && !this.player.jumping) {
+        this.player.vy = this.player.maxJump;
+        this.player.jumping = true;
+      }
+    });
+    window.addEventListener('keyup', (e) => {
+      this.keys[e.key.toLowerCase()] = false;
+    });
+
+    // Touch jump
+    this.canvas.addEventListener('click', () => {
+      if (!this.player.jumping) {
+        this.player.vy = this.player.maxJump;
+        this.player.jumping = true;
+      }
+    });
+  }
+
+  generatePlatforms() {
     const platformSpacing = 80;
     const platformCount = Math.ceil(this.canvas.height / platformSpacing) + 2;
 
     for (let i = 0; i < platformCount; i++) {
-      const y = this.canvas.height - (i * platformSpacing);
+      const y = this.canvas.height - i * platformSpacing;
       const width = 80 + Math.random() * 40;
       const x = Math.random() * (this.canvas.width - width);
 
@@ -48,11 +73,10 @@ export class Obby {
         color: '#0099FF'
       });
 
-      // Add obstacles
-      if (i > 2 && Math.random() > 0.4) {
-        const obsX = Math.random() * (this.canvas.width - 30);
+      // Add some obstacles
+      if (i > 2 && Math.random() > 0.5) {
         this.obstacles.push({
-          x: obsX,
+          x: Math.random() * (this.canvas.width - 30),
           y: y - 50,
           width: 30,
           height: 20,
@@ -65,62 +89,59 @@ export class Obby {
   update(dt) {
     this.gameTime += dt;
 
-    // Jump
-    if ((this.keys['ArrowUp'] || this.keys['w'] || this.keys[' ']) && !this.player.jumping) {
-      this.player.vy = -12;
-      this.player.jumping = true;
-    }
-
-    // Move left/right
-    if (this.keys['ArrowLeft'] || this.keys['a']) {
+    // Left/right movement
+    if (this.keys['arrowleft'] || this.keys['a']) {
       this.player.x -= 5;
     }
-    if (this.keys['ArrowRight'] || this.keys['d']) {
+    if (this.keys['arrowright'] || this.keys['d']) {
       this.player.x += 5;
     }
 
     // Keep in bounds
     this.player.x = Math.max(0, Math.min(this.canvas.width - this.player.width, this.player.x));
 
-    // Apply gravity
-    this.player.vy += this.gravity;
+    // Gravity
+    this.player.vy += this.player.gravity;
     this.player.y += this.player.vy;
 
     // Platform collision
     let onPlatform = false;
-    this.platforms.forEach(p => {
-      if (this.player.vy > 0 &&
-        this.player.y + this.player.height >= p.y &&
-        this.player.y + this.player.height <= p.y + p.height + 10 &&
-        this.player.x + this.player.width > p.x &&
-        this.player.x < p.x + p.width) {
-        this.player.y = p.y - this.player.height;
+    this.platforms.forEach((platform) => {
+      if (
+        this.player.vy > 0 &&
+        this.player.y + this.player.height >= platform.y &&
+        this.player.y + this.player.height <= platform.y + platform.height + 10 &&
+        this.player.x + this.player.width > platform.x &&
+        this.player.x < platform.x + platform.width
+      ) {
+        this.player.y = platform.y - this.player.height;
         this.player.vy = 0;
         this.player.jumping = false;
         onPlatform = true;
 
-        // Award points for reaching new height
-        const height = this.canvas.height - p.y;
-        const points = Math.floor(height / 10);
-        if (points > this.platformsCleared) {
-          this.platformsCleared = points;
-          this.score += 10;
-          this.onScore(this.score);
+        // Score for reaching higher platforms
+        const height = this.canvas.height - platform.y;
+        const points = Math.floor(height / 80);
+        if (points > this.score) {
+          this.score = points;
+          this.onScore(this.score * 10);
         }
       }
     });
 
-    // Obstacle collision
-    for (const obs of this.obstacles) {
-      if (this.player.x + this.player.width > obs.x &&
-        this.player.x < obs.x + obs.width &&
-        this.player.y + this.player.height > obs.y &&
-        this.player.y < obs.y + obs.height) {
-        return false; // Game over
+    // Obstacle collision (game over)
+    for (let obstacle of this.obstacles) {
+      if (
+        this.player.x + this.player.width > obstacle.x &&
+        this.player.x < obstacle.x + obstacle.width &&
+        this.player.y + this.player.height > obstacle.y &&
+        this.player.y < obstacle.y + obstacle.height
+      ) {
+        return false;
       }
     }
 
-    // Fall off bottom
+    // Fall off bottom (game over)
     if (this.player.y > this.canvas.height) {
       return false;
     }
@@ -133,7 +154,7 @@ export class Obby {
     const w = this.canvas.width;
     const h = this.canvas.height;
 
-    // Background gradient
+    // Sky gradient
     const gradient = ctx.createLinearGradient(0, 0, 0, h);
     gradient.addColorStop(0, '#87CEEB');
     gradient.addColorStop(1, '#E0F6FF');
@@ -141,26 +162,33 @@ export class Obby {
     ctx.fillRect(0, 0, w, h);
 
     // Draw platforms
-    this.platforms.forEach(p => {
-      ctx.fillStyle = p.color;
-      ctx.fillRect(p.x, p.y, p.width, p.height);
+    this.platforms.forEach((platform) => {
+      ctx.fillStyle = platform.color;
+      ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+
+      // Platform shine
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.fillRect(platform.x, platform.y, platform.width, 3);
+
+      // Border
       ctx.strokeStyle = '#0077CC';
       ctx.lineWidth = 2;
-      ctx.strokeRect(p.x, p.y, p.width, p.height);
+      ctx.strokeRect(platform.x, platform.y, platform.width, platform.height);
     });
 
     // Draw obstacles
-    this.obstacles.forEach(o => {
-      ctx.fillStyle = o.color;
-      ctx.fillRect(o.x, o.y, o.width, o.height);
-      // Add spikes
+    this.obstacles.forEach((obstacle) => {
+      ctx.fillStyle = obstacle.color;
+      ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+
+      // Spikes
       ctx.strokeStyle = '#CC0000';
       ctx.lineWidth = 2;
       for (let i = 0; i < 3; i++) {
         ctx.beginPath();
-        ctx.moveTo(o.x + i * 10 + 5, o.y);
-        ctx.lineTo(o.x + i * 10 + 2, o.y - 8);
-        ctx.lineTo(o.x + i * 10 + 8, o.y);
+        ctx.moveTo(obstacle.x + i * 10 + 5, obstacle.y);
+        ctx.lineTo(obstacle.x + i * 10 + 2, obstacle.y - 8);
+        ctx.lineTo(obstacle.x + i * 10 + 8, obstacle.y);
         ctx.stroke();
       }
     });
@@ -168,11 +196,8 @@ export class Obby {
     // Draw player
     ctx.fillStyle = '#FFD700';
     ctx.fillRect(this.player.x, this.player.y, this.player.width, this.player.height);
-    ctx.strokeStyle = '#FFA500';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(this.player.x, this.player.y, this.player.width, this.player.height);
 
-    // Eyes
+    // Player eyes
     ctx.fillStyle = '#000';
     ctx.beginPath();
     ctx.arc(this.player.x + 7, this.player.y + 10, 3, 0, Math.PI * 2);
@@ -181,15 +206,21 @@ export class Obby {
     ctx.arc(this.player.x + 18, this.player.y + 10, 3, 0, Math.PI * 2);
     ctx.fill();
 
-    // UI
+    // Draw UI
     ctx.fillStyle = '#000';
-    ctx.font = 'bold 20px Arial';
-    ctx.fillText(`Score: ${this.score}`, 20, 40);
-    ctx.fillText(`Platforms: ${this.platformsCleared}`, 20, 70);
-    ctx.fillText(`Time: ${(this.maxTime - this.gameTime) / 1000 | 0}s`, w - 250, 40);
+    ctx.font = 'bold 24px Arial';
+    ctx.fillText(`Score: ${this.score * 10}`, 20, 40);
+
+    const timeLeft = Math.max(0, this.maxTime - this.gameTime);
+    ctx.fillText(`Time: ${(timeLeft / 1000).toFixed(1)}s`, w - 250, 40);
+
+    // Height indicator
+    ctx.fillText(`Height: ${this.score * 80}`, 20, 70);
   }
 
   getResult() {
-    return { score: this.score, platformsCleared: this.platformsCleared };
+    return {
+      score: this.score * 10
+    };
   }
 }

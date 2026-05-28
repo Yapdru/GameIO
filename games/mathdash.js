@@ -6,10 +6,9 @@ export class MathDash {
     this.score = 0;
     this.gameTime = 0;
     this.maxTime = 45000;
-    this.problems = [];
-    this.currentIndex = 0;
+    this.problemIdx = 0;
     this.correct = 0;
-    this.totalAnswered = 0;
+    this.total = 0;
 
     this.generateProblems();
     this.render();
@@ -17,9 +16,9 @@ export class MathDash {
 
   generateProblems() {
     const ops = ['+', '-', '×', '÷'];
-    const count = 10;
+    this.problems = [];
 
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < 10; i++) {
       const op = ops[Math.floor(Math.random() * ops.length)];
       let a, b, answer;
 
@@ -44,12 +43,12 @@ export class MathDash {
       // Generate wrong answers
       const wrong = [answer];
       while (wrong.length < 4) {
-        const w = answer + (Math.random() - 0.5) * 20;
-        if (!wrong.includes(w) && w > 0) wrong.push(Math.floor(w));
+        const w = answer + Math.floor((Math.random() - 0.5) * 20);
+        if (!wrong.includes(w) && w > 0) wrong.push(w);
       }
 
       const options = wrong.sort(() => Math.random() - 0.5);
-      const correctIndex = options.indexOf(answer);
+      const correctIdx = options.indexOf(answer);
 
       this.problems.push({
         a,
@@ -57,16 +56,16 @@ export class MathDash {
         op,
         answer,
         options,
-        correctIndex
+        correctIdx
       });
     }
   }
 
-  selectAnswer(index) {
-    const p = this.problems[this.currentIndex];
-    this.totalAnswered++;
+  selectAnswer(idx) {
+    const p = this.problems[this.problemIdx];
+    this.total++;
 
-    if (index === p.correctIndex) {
+    if (idx === p.correctIdx) {
       this.correct++;
       this.score += 50;
       this.onScore(this.score);
@@ -75,63 +74,61 @@ export class MathDash {
       this.onScore(this.score);
     }
 
-    this.currentIndex++;
-    if (this.currentIndex < this.problems.length) {
+    this.problemIdx++;
+    if (this.problemIdx < this.problems.length) {
       this.render();
     }
   }
 
   update(dt) {
     this.gameTime += dt;
-    return this.gameTime < this.maxTime && this.currentIndex < this.problems.length;
+    return this.gameTime < this.maxTime && this.problemIdx < this.problems.length;
   }
 
   render() {
     this.container.innerHTML = '';
+    const div = document.createElement('div');
+    div.style.padding = '30px';
+    div.style.maxWidth = '600px';
+    div.style.margin = '0 auto';
 
-    if (this.currentIndex >= this.problems.length) {
-      const accuracy = Math.floor((this.correct / this.totalAnswered) * 100);
-      const endDiv = document.createElement('div');
-      endDiv.style.textAlign = 'center';
-      endDiv.style.padding = '40px';
-      endDiv.innerHTML = `
-        <h2 style="color: #0099FF; margin-bottom: 20px;">Math Dash Complete!</h2>
+    if (this.problemIdx >= this.problems.length) {
+      const acc = Math.floor((this.correct / this.total) * 100);
+      const end = document.createElement('div');
+      end.style.textAlign = 'center';
+      end.innerHTML = `
+        <h2 style="color: #0099FF;">Math Dash Complete!</h2>
         <div style="font-size: 1.3rem; margin: 20px 0;">
-          <div>Correct: <strong>${this.correct} / ${this.totalAnswered}</strong></div>
-          <div>Accuracy: <strong>${accuracy}%</strong></div>
+          <div>Correct: <strong>${this.correct} / ${this.total}</strong></div>
+          <div>Accuracy: <strong>${acc}%</strong></div>
         </div>
         <div style="font-size: 1.5rem; color: #FFD700; margin-top: 20px;">Score: ${this.score}</div>
       `;
-      this.container.appendChild(endDiv);
+      this.container.appendChild(end);
       return;
     }
 
-    const p = this.problems[this.currentIndex];
-
-    const mathDiv = document.createElement('div');
-    mathDiv.style.padding = '30px';
-    mathDiv.style.maxWidth = '600px';
-    mathDiv.style.margin = '0 auto';
+    const p = this.problems[this.problemIdx];
 
     // Problem
-    const problemDiv = document.createElement('div');
-    problemDiv.style.fontSize = '3rem';
-    problemDiv.style.fontWeight = '700';
-    problemDiv.style.marginBottom = '30px';
-    problemDiv.style.padding = '30px';
-    problemDiv.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
-    problemDiv.style.borderRadius = '16px';
-    problemDiv.style.textAlign = 'center';
-    problemDiv.style.color = '#333';
-    problemDiv.textContent = `${p.a} ${p.op} ${p.b} = ?`;
-    mathDiv.appendChild(problemDiv);
+    const pDiv = document.createElement('div');
+    pDiv.style.fontSize = '3rem';
+    pDiv.style.fontWeight = '700';
+    pDiv.style.padding = '30px';
+    pDiv.style.background = 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)';
+    pDiv.style.borderRadius = '16px';
+    pDiv.style.marginBottom = '30px';
+    pDiv.style.textAlign = 'center';
+    pDiv.style.color = '#333';
+    pDiv.textContent = `${p.a} ${p.op} ${p.b} = ?`;
+    div.appendChild(pDiv);
 
-    // Options
-    const optionsDiv = document.createElement('div');
-    optionsDiv.style.display = 'grid';
-    optionsDiv.style.gridTemplateColumns = 'repeat(2, 1fr)';
-    optionsDiv.style.gap = '12px';
-    optionsDiv.style.marginBottom = '30px';
+    // Options (2x2 grid)
+    const optDiv = document.createElement('div');
+    optDiv.style.display = 'grid';
+    optDiv.style.gridTemplateColumns = 'repeat(2, 1fr)';
+    optDiv.style.gap = '12px';
+    optDiv.style.marginBottom = '30px';
 
     p.options.forEach((opt, i) => {
       const btn = document.createElement('button');
@@ -142,7 +139,6 @@ export class MathDash {
       btn.style.background = '#FFF';
       btn.style.borderRadius = '12px';
       btn.style.cursor = 'pointer';
-      btn.style.transition = 'all 0.2s';
       btn.textContent = opt;
       btn.onmouseover = () => {
         btn.style.background = '#E0F4FF';
@@ -155,26 +151,26 @@ export class MathDash {
         btn.style.transform = 'scale(1)';
       };
       btn.onclick = () => this.selectAnswer(i);
-      optionsDiv.appendChild(btn);
+      optDiv.appendChild(btn);
     });
 
-    mathDiv.appendChild(optionsDiv);
+    div.appendChild(optDiv);
 
     // Progress
-    const progress = document.createElement('div');
-    progress.style.textAlign = 'center';
-    progress.style.color = '#666';
-    progress.innerHTML = `
-      Problem ${this.currentIndex + 1} of ${this.problems.length}<br>
+    const prog = document.createElement('div');
+    prog.style.textAlign = 'center';
+    prog.style.color = '#666';
+    prog.innerHTML = `
+      Problem ${this.problemIdx + 1} / ${this.problems.length}<br>
       <strong style="color: #0099FF;">Score: ${this.score}</strong> |
       <strong style="color: #00CC88;">Correct: ${this.correct}</strong>
     `;
-    mathDiv.appendChild(progress);
+    div.appendChild(prog);
 
-    this.container.appendChild(mathDiv);
+    this.container.appendChild(div);
   }
 
   getResult() {
-    return { score: this.score, correct: this.correct, total: this.totalAnswered };
+    return { score: this.score, correct: this.correct };
   }
 }

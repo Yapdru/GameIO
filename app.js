@@ -6,6 +6,11 @@ import { Avatar, renderAvatarPicker } from './avatars.js';
 import { createRoom, joinRoom, getRoom, OfflineRoom } from './firebase.js';
 import { Fishana } from './games/fishana.js';
 import { Cars } from './games/cars.js';
+import { Space } from './games/space.js';
+import { Obby } from './games/obby.js';
+import { Badaam } from './games/badaam.js';
+import { Quiz } from './games/quiz.js';
+import { MathDash } from './games/mathdash.js';
 
 class GameIO {
   constructor() {
@@ -337,16 +342,25 @@ class GameIO {
       let gameInstance = null;
 
       // Create game instance
+      const updateScore = (score) => {
+        scoreDisplay.textContent = score;
+      };
+
       if (gameKey === 'fishana') {
-        gameInstance = new Fishana(canvas, (score) => {
-          scoreDisplay.textContent = score;
-        });
+        gameInstance = new Fishana(canvas, updateScore);
       } else if (gameKey === 'cars') {
-        gameInstance = new Cars(canvas, (score) => {
-          scoreDisplay.textContent = score;
-        });
+        gameInstance = new Cars(canvas, updateScore);
+      } else if (gameKey === 'space') {
+        gameInstance = new Space(canvas, updateScore);
+      } else if (gameKey === 'obby') {
+        gameInstance = new Obby(canvas, updateScore);
+      } else if (gameKey === 'badaam') {
+        gameInstance = new Badaam(canvas.parentElement, updateScore);
+      } else if (gameKey === 'quiz') {
+        gameInstance = new Quiz(canvas.parentElement, updateScore);
+      } else if (gameKey === 'math') {
+        gameInstance = new MathDash(canvas.parentElement, updateScore);
       }
-      // TODO: Add other games here (badaam, space, obby, quiz, math)
 
       if (!gameInstance) {
         // Placeholder if game not implemented

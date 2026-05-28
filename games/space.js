@@ -1,57 +1,77 @@
-// Space Dash - Dodge asteroids, collect stars
+// Space Dash - Avoid obstacles, collect stars
 export class Space {
   constructor(canvas, onScore) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.onScore = onScore;
 
+    // Game settings
+    this.maxTime = 40000; // 40 seconds
+    this.gameTime = 0;
+    this.score = 0;
+    this.level = 1;
+
+    // Player
     this.player = {
       x: canvas.width / 2,
-      y: canvas.height - 50,
-      width: 25,
-      height: 35,
+      y: canvas.height - 60,
+      width: 30,
+      height: 30,
       vx: 0
     };
 
+    // Stars (collectibles)
     this.stars = [];
-    this.asteroids = [];
-    this.score = 0;
-    this.gameTime = 0;
-    this.maxTime = 40000;
-    this.level = 1;
+    this.spawnStars(4);
 
+    // Obstacles (asteroids)
+    this.obstacles = [];
+    this.spawnObstacles(3);
+
+    // Controls
     this.keys = {};
-    window.addEventListener('keydown', e => { this.keys[e.key] = true; });
-    window.addEventListener('keyup', e => { this.keys[e.key] = false; });
+    this.setupControls();
+  }
 
-    // Mouse control
-    canvas.addEventListener('mousemove', e => {
-      const rect = canvas.getBoundingClientRect();
-      this.player.x = Math.max(15, Math.min(canvas.width - 15, e.clientX - rect.left));
+  setupControls() {
+    window.addEventListener('keydown', (e) => {
+      this.keys[e.key.toLowerCase()] = true;
+    });
+    window.addEventListener('keyup', (e) => {
+      this.keys[e.key.toLowerCase()] = false;
     });
 
-    this.spawnStars(3);
-    this.spawnAsteroids(3);
+    // Mouse
+    this.canvas.addEventListener('mousemove', (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      this.player.x = Math.max(20, Math.min(this.canvas.width - 20, e.clientX - rect.left));
+    });
+
+    // Touch
+    this.canvas.addEventListener('touchmove', (e) => {
+      const rect = this.canvas.getBoundingClientRect();
+      this.player.x = Math.max(20, Math.min(this.canvas.width - 20, e.touches[0].clientX - rect.left));
+    });
   }
 
   spawnStars(count) {
     for (let i = 0; i < count; i++) {
       this.stars.push({
-        x: Math.random() * this.canvas.width,
-        y: Math.random() * (this.canvas.height / 2),
-        radius: 5,
-        vy: 2
+        x: Math.random() * (this.canvas.width - 40) + 20,
+        y: Math.random() * (this.canvas.height * 0.6),
+        radius: 6,
+        vy: 2 + this.level * 0.3
       });
     }
   }
 
-  spawnAsteroids(count) {
+  spawnObstacles(count) {
     for (let i = 0; i < count; i++) {
-      this.asteroids.push({
-        x: Math.random() * this.canvas.width,
-        y: -30,
-        radius: 15 + Math.random() * 15,
-        vy: 2 + this.level * 0.5,
+      this.obstacles.push({
+        x: Math.random() * (this.canvas.width - 40) + 20,
+        y: -30 - Math.random() * 50,
+        radius: 15 + Math.random() * 10,
+        vy: 2.5 + this.level * 0.4,
         vx: (Math.random() - 0.5) * 2
       });
     }
@@ -60,54 +80,66 @@ export class Space {
   update(dt) {
     this.gameTime += dt;
 
-    // Player movement
-    if (this.keys['ArrowLeft'] || this.keys['a']) this.player.vx = -5;
-    else if (this.keys['ArrowRight'] || this.keys['d']) this.player.vx = 5;
-    else this.player.vx *= 0.9;
+    // Keyboard steering
+    if (this.keys['arrowleft'] || this.keys['a']) {
+      this.player.vx = -6;
+    } else if (this.keys['arrowright'] || this.keys['d']) {
+      this.player.vx = 6;
+    } else {
+      this.player.vx *= 0.9;
+    }
 
     this.player.x += this.player.vx;
-    this.player.x = Math.max(15, Math.min(this.canvas.width - 15, this.player.x));
+    this.player.x = Math.max(20, Math.min(this.canvas.width - 20, this.player.x));
 
     // Update stars
-    this.stars = this.stars.filter(s => {
-      s.y += s.vy;
+    this.stars = this.stars.filter((star) => {
+      star.y += star.vy;
 
       // Check collision with player
-      const dist = Math.hypot(s.x - this.player.x, s.y - this.player.y);
-      if (dist < s.radius + 15) {
+      const dist = Math.hypot(star.x - this.player.x, star.y - this.player.y);
+      if (dist < star.radius + 15) {
         this.score += 25;
         this.onScore(this.score);
         return false;
       }
 
-      return s.y < this.canvas.height;
+      return star.y < this.canvas.height;
     });
 
-    // Update asteroids
-    this.asteroids = this.asteroids.filter(a => {
-      a.y += a.vy;
-      a.x += a.vx;
+    // Update obstacles
+    this.obstacles = this.obstacles.filter((obs) => {
+      obs.y += obs.vy;
+      obs.x += obs.vx;
 
       // Wrap X
-      if (a.x < -50) a.x = this.canvas.width + 50;
-      if (a.x > this.canvas.width + 50) a.x = -50;
+      if (obs.x < -50) obs.x = this.canvas.width + 50;
+      if (obs.x > this.canvas.width + 50) obs.x = -50;
 
       // Check collision with player
-      const dist = Math.hypot(a.x - this.player.x, a.y - this.player.y);
-      if (dist < a.radius + 15) {
+      const dist = Math.hypot(obs.x - this.player.x, obs.y - this.player.y);
+      if (dist < obs.radius + 15) {
         return false; // Game over
       }
 
-      return a.y < this.canvas.height + 50;
+      return obs.y < this.canvas.height + 50;
     });
 
     // Spawn new items
-    if (this.stars.length < 2 + this.level) this.spawnStars(1);
-    if (this.asteroids.length < 2 + this.level) this.spawnAsteroids(1);
+    if (this.stars.length < 2 + this.level) {
+      this.spawnStars(1);
+    }
+    if (this.obstacles.length < 2 + this.level) {
+      this.spawnObstacles(1);
+    }
 
-    // Increase difficulty
-    if (this.gameTime > 10000 && this.level === 1) this.level = 2;
-    if (this.gameTime > 20000 && this.level === 2) this.level = 3;
+    // Difficulty increase
+    if (this.gameTime > 13000 && this.level === 1) {
+      this.level = 2;
+    }
+    if (this.gameTime > 26000 && this.level === 2) {
+      this.level = 3;
+    }
 
     return this.gameTime < this.maxTime;
   }
@@ -121,68 +153,104 @@ export class Space {
     ctx.fillStyle = '#000814';
     ctx.fillRect(0, 0, w, h);
 
-    // Stars background
-    ctx.fillStyle = '#fff';
+    // Starfield (parallax effect)
+    ctx.fillStyle = '#ffffff';
     for (let i = 0; i < 50; i++) {
-      const x = (this.gameTime / 20 + i * 73) % w;
+      const x = (this.gameTime / 50 + i * 73) % w;
       const y = (i * 11) % h;
       ctx.beginPath();
       ctx.arc(x, y, 1, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    // Draw collectibles
+    // Draw collectible stars
     ctx.fillStyle = '#FFD700';
-    this.stars.forEach(s => {
+    this.stars.forEach((star) => {
+      // Star shape
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+      for (let i = 0; i < 5; i++) {
+        const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+        const x = star.x + star.radius * Math.cos(angle);
+        const y = star.y + star.radius * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
       ctx.fill();
-      // Star sparkle
-      ctx.strokeStyle = '#FFF';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(s.x - 8, s.y);
-      ctx.lineTo(s.x + 8, s.y);
-      ctx.moveTo(s.x, s.y - 8);
-      ctx.lineTo(s.x, s.y + 8);
-      ctx.stroke();
-    });
 
-    // Draw asteroids
-    ctx.fillStyle = '#8B8B8B';
-    this.asteroids.forEach(a => {
-      ctx.beginPath();
-      ctx.arc(a.x, a.y, a.radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#666';
+      // Glow
+      ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
       ctx.lineWidth = 2;
       ctx.stroke();
     });
 
-    // Draw player ship
+    // Draw obstacles (asteroids)
+    ctx.fillStyle = '#888888';
+    this.obstacles.forEach((obs) => {
+      ctx.beginPath();
+      ctx.arc(obs.x, obs.y, obs.radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Crater details
+      ctx.fillStyle = '#666666';
+      ctx.beginPath();
+      ctx.arc(obs.x - 5, obs.y - 5, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(obs.x + 7, obs.y + 4, 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#888888';
+    });
+
+    // Draw player (ship)
     ctx.fillStyle = '#00FF00';
+    // Ship body
     ctx.beginPath();
-    ctx.moveTo(this.player.x, this.player.y - 20);
+    ctx.moveTo(this.player.x, this.player.y - 15);
     ctx.lineTo(this.player.x - 12, this.player.y + 15);
     ctx.lineTo(this.player.x + 12, this.player.y + 15);
+    ctx.closePath();
     ctx.fill();
 
-    // Player glow
+    // Ship glow
     ctx.strokeStyle = '#00FF00';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(this.player.x, this.player.y, 20, 0, Math.PI * 2);
+    ctx.arc(this.player.x, this.player.y, 18, 0, Math.PI * 2);
     ctx.stroke();
 
-    // UI
-    ctx.fillStyle = '#FFD700';
-    ctx.font = 'bold 20px Arial';
+    // Thruster flame
+    const flameHeight = 8 + Math.sin(this.gameTime / 100) * 2;
+    ctx.fillStyle = 'rgba(255, 100, 0, 0.6)';
+    ctx.beginPath();
+    ctx.moveTo(this.player.x - 4, this.player.y + 15);
+    ctx.lineTo(this.player.x + 4, this.player.y + 15);
+    ctx.lineTo(this.player.x, this.player.y + 15 + flameHeight);
+    ctx.closePath();
+    ctx.fill();
+
+    // Draw UI
+    ctx.fillStyle = '#00FF00';
+    ctx.font = 'bold 24px monospace';
+    ctx.textAlign = 'left';
     ctx.fillText(`Score: ${this.score}`, 20, 40);
     ctx.fillText(`Level: ${this.level}`, 20, 70);
-    ctx.fillText(`Time: ${(this.maxTime - this.gameTime) / 1000 | 0}s`, w - 250, 40);
+
+    const timeLeft = Math.max(0, this.maxTime - this.gameTime);
+    ctx.fillText(`Time: ${(timeLeft / 1000).toFixed(1)}s`, w - 250, 40);
+
+    // Danger warning at high level
+    if (this.level === 3) {
+      ctx.fillStyle = '#FF0000';
+      ctx.font = 'bold 18px monospace';
+      ctx.fillText('CRITICAL SPEED!', w / 2 - 80, h - 20);
+    }
   }
 
   getResult() {
-    return { score: this.score, level: this.level };
+    return {
+      score: this.score,
+      level: this.level
+    };
   }
 }
