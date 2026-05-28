@@ -9,6 +9,7 @@ import { AvatarScreen } from './screens/avatar.js';
 import { SetupScreen } from './screens/setup.js';
 import { JoinScreen } from './screens/join.js';
 import { LobbyScreen } from './screens/lobby.js';
+import { Lobby3DScreen } from './screens/lobby-3d.js';
 import { GameScreen } from './screens/game.js';
 
 // Register all screens
@@ -16,7 +17,8 @@ screenManager.register('start', StartScreen);
 screenManager.register('avatar', AvatarScreen);
 screenManager.register('setup', SetupScreen);
 screenManager.register('join', JoinScreen);
-screenManager.register('lobby', LobbyScreen);
+screenManager.register('lobby', Lobby3DScreen); // Use 3D lobby
+screenManager.register('lobby-2d', LobbyScreen); // Keep 2D as fallback
 screenManager.register('game', GameScreen);
 
 // Start the app
