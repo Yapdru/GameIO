@@ -1,0 +1,134 @@
+DONECLAUDE HANDOFF — GAMEIO NEXT STEPS
+
+Status:
+Claude has finished its current pass. The next steps file must guide the next build without repeating the messy Ver XP mistakes.
+
+Main rule:
+GameIO is a multiplayer arcade universe, not a fake realistic driving demo.
+
+Core loop:
+1. Player opens GameIO.
+2. Player creates or joins a room.
+3. Player chooses a clean avatar.
+4. Player enters multiplayer lobby.
+5. Host selects a playlist of games.
+6. Players play games one by one.
+7. Scores update after each game.
+8. Final winner is shown.
+9. Players can replay or return to lobby.
+
+Multiplayer requirement:
+Multiplayer must stay.
+Use Firebase Realtime Database if config exists.
+Quick Play/offline mode may exist, but it must not replace multiplayer.
+
+Required games:
+- Fishana Evolution
+- Cars / Drift
+- Badaam Saat
+- Space Dash
+- Obby Run
+- Quiz / Riddle
+- Math Dash
+
+Clean architecture:
+Do not keep everything in one giant file.
+Use separate modules.
+
+Recommended files:
+index.html
+style.css
+app.js
+firebase.js
+game-data.js
+avatars.js
+lobby.js
+ui.js
+
+games/fishana.js
+games/cars.js
+games/badaam.js
+games/space.js
+games/obby.js
+games/quiz.js
+games/mathdash.js
+
+Phase 1 — Clean shell:
+- Start screen
+- Create Room
+- Join Room
+- Quick Play
+- Avatar screen
+- Lobby screen
+- Game selector
+- Results screen
+
+Phase 2 — Multiplayer basics:
+- Create room code
+- Join room code
+- Sync player names
+- Sync avatars
+- Sync scores
+- Host starts game
+- Host starts next round
+
+Phase 3 — Playable games:
+Every game must be playable, even if simple.
+Each game must return a score.
+Each game must end cleanly and return to results/lobby.
+
+Fishana Evolution:
+Move fish, collect pearls, avoid enemy, evolve, score.
+
+Cars / Drift:
+Arcade driving, steering, boost, drift score, checkpoints or laps.
+
+Badaam Saat:
+Card table, valid move highlight, play/pass, scoring.
+
+Space Dash:
+Avoid obstacles, collect stars, boost, score.
+
+Obby Run:
+Jump/dodge, platforms, checkpoints, score.
+
+Quiz / Riddle:
+Multiple choice, timer, correct score.
+
+Math Dash:
+Random math, timer, increasing difficulty, score.
+
+Phase 4 — 3D only after gameplay:
+3D should be a clean stylized lobby, not fake Forza.
+Add portals for games.
+Add simple avatars.
+Add smooth camera.
+Do not make the entire game a driving demo.
+
+Visual style:
+Light blue, yellow, white, navy accents.
+Clean, bright, playful, smooth.
+No trash emoji gameplay.
+No ugly placeholder cubes.
+No fake AAA overbuild.
+
+What went wrong before:
+- Too much fake realism
+- Giant engine file
+- Game purpose got lost
+- Multiplayer got sidelined
+- Games disappeared behind 3D demo
+
+Acceptance criteria:
+1. Create room works.
+2. Join room works.
+3. Players appear in lobby.
+4. Host starts Fishana.
+5. Fishana can be played and scored.
+6. Scores sync.
+7. Results show winner.
+8. Next game can start.
+9. GameIO still feels like many games in one lobby.
+
+Final principle:
+Gameplay first. Multiplayer first. Clean structure first. Polish later.
