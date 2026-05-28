@@ -5,6 +5,7 @@ import { GAMES, DEFAULT_GAME_ORDER, AVATAR_CONFIG } from './game-data.js';
 import { Avatar, renderAvatarPicker } from './avatars.js';
 import { createRoom, joinRoom, getRoom, OfflineRoom } from './firebase.js';
 import { Fishana } from './games/fishana.js';
+import { Cars } from './games/cars.js';
 
 class GameIO {
   constructor() {
@@ -340,8 +341,12 @@ class GameIO {
         gameInstance = new Fishana(canvas, (score) => {
           scoreDisplay.textContent = score;
         });
+      } else if (gameKey === 'cars') {
+        gameInstance = new Cars(canvas, (score) => {
+          scoreDisplay.textContent = score;
+        });
       }
-      // TODO: Add other games here (cars, badaam, space, obby, quiz, math)
+      // TODO: Add other games here (badaam, space, obby, quiz, math)
 
       if (!gameInstance) {
         // Placeholder if game not implemented
