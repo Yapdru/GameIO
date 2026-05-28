@@ -1,0 +1,157 @@
+DONECLAUDE HANDOFF — GAMEIO NEXT STEPS
+
+Rule for future DoneClaude updates:
+Every time the user says DoneClaude, add more useful next steps and more example references. Keep the handoff practical for Claude Code.
+
+Main goal:
+Rebuild GameIO cleanly as a multiplayer arcade universe.
+
+GameIO is:
+- multiplayer rooms
+- avatar selection
+- lobby
+- many games
+- score progression
+- winner screen
+- replay loop
+
+GameIO is not:
+- only a driving demo
+- fake Forza
+- a giant messy 3D file
+- emoji-only gameplay
+
+Core loop:
+1. Open GameIO.
+2. Create or join room.
+3. Choose avatar.
+4. Enter lobby.
+5. Host chooses playlist.
+6. Players play game rounds.
+7. Scores update.
+8. Winner is shown.
+9. Players replay or return to lobby.
+
+Multiplayer requirement:
+Multiplayer must stay. Quick Play can exist, but it cannot replace multiplayer.
+
+Required games:
+- Fishana Evolution
+- Cars / Drift
+- Badaam Saat
+- Space Dash
+- Obby Run
+- Quiz / Riddle
+- Math Dash
+
+Clean architecture:
+Use separate files.
+Do not put all code in one huge file.
+
+Recommended files:
+index.html
+style.css
+app.js
+firebase.js
+game-data.js
+avatars.js
+lobby.js
+ui.js
+
+games/fishana.js
+games/cars.js
+games/badaam.js
+games/space.js
+games/obby.js
+games/quiz.js
+games/mathdash.js
+
+Build order:
+1. Clean app shell.
+2. Multiplayer room basics.
+3. Playable Fishana.
+4. Playable Cars.
+5. Playable Badaam Saat.
+6. Other games.
+7. Results/winner loop.
+8. Optional stylized 3D lobby.
+9. Polish.
+
+3D rule:
+3D is allowed only if it supports the game loop.
+Build stylized arcade 3D, not fake AAA realism.
+
+3D ideas to keep as inspiration:
+- clean 3D lobby
+- portals to games
+- simple avatar movement
+- smooth camera
+- light blue/yellow theme
+- first-person arrival as optional intro
+- elevator transition as optional cinematic
+
+What went wrong before:
+- tried to become Forza too fast
+- gameplay got hidden
+- multiplayer got sidelined
+- files became too large
+- 3D replaced the game instead of supporting it
+
+Example websites / references:
+Use these only for design lessons. Do not copy assets, names, logos, code, maps, UI, or branding.
+
+1. Agar.io — https://agar.io
+Lesson: Simple multiplayer can be very addictive when joining is instant and the core mechanic is clear.
+Use for GameIO: quick room entry, simple rules, fast replay.
+
+2. Slither.io — https://slither.io
+Lesson: Smooth movement is more important than realistic graphics.
+Use for GameIO: Fishana should feel smooth and satisfying.
+
+3. Diep.io — https://diep.io
+Lesson: Simple progression and upgrades keep players playing.
+Use for GameIO: score, evolution, upgrades, next round.
+
+4. Shell Shockers — https://shellshock.io
+Lesson: Stylized browser 3D can work if it is readable and lightweight.
+Use for GameIO: if adding 3D, make it stylized and performant.
+
+5. Skribbl.io — https://skribbl.io
+Lesson: Room code, friends, turns, scoring, and replay are powerful even with simple visuals.
+Use for GameIO: multiplayer lobby and round flow.
+
+6. Pokémon Showdown — https://pokemonshowdown.com
+Lesson: Strong multiplayer structure can matter more than graphics.
+Use for GameIO: rooms, battles/games, replay, score history.
+
+7. CrazyGames Multiplayer — https://www.crazygames.com/t/multiplayer
+Lesson: Browser games need fast loading and simple entry.
+Use for GameIO: no heavy startup; make games easy to launch.
+
+8. Smash Karts — https://smashkarts.io
+Lesson: Short, readable, stylized multiplayer driving can be more fun than realistic simulation.
+Use for GameIO Cars: arcade driving, quick matches, visible scoring.
+
+9. Bloxd.io — https://bloxd.io
+Lesson: Browser multiplayer can have multiple modes and a simple shared-world feel.
+Use for GameIO: lobby plus multiple game worlds.
+
+10. Forza Horizon — https://forza.net
+Lesson: use only experience-design ideas like camera weight, lighting, reveal moments, and pacing.
+Do not copy Forza visuals, cars, maps, music, UI, or branding.
+Use for GameIO: polished transitions, not fake realism.
+
+Acceptance criteria:
+1. Create room works.
+2. Join room works.
+3. Players appear in lobby.
+4. Host starts Fishana.
+5. Fishana can be played and scored.
+6. Scores sync.
+7. Results show winner.
+8. Host can start next game.
+9. Cars and Badaam Saat are reachable.
+10. Optional 3D lobby supports gameplay instead of replacing it.
+
+Final principle:
+Gameplay first. Multiplayer first. Clean structure first. Polish and 3D later.
