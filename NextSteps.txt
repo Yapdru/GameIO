@@ -140,17 +140,34 @@ Use for Fishana Evolution: visible growth stages and rewards.
 Lesson: Short, readable, stylized multiplayer driving can be more fun than realistic simulation.
 Use for Cars / Drift: arcade steering, boosts, short rounds, clear scoring.
 
-Extra design lessons:
-- Every game needs a 3-second explanation.
-- Every game needs visible score.
-- Every game needs a clear end condition.
-- Every game needs Back to Lobby.
-- Multiplayer should sync only important data: players, scores, current game, round state.
-- Keep assets small for iPad and browser.
-- Start with 2D/canvas games first.
-- Add 3D lobby later only if the gameplay loop already works.
-- Stylized graphics are better than broken realism.
-- GameIO must feel like many games connected by one lobby.
+11. Paper.io — https://paper-io.com
+Lesson: Territory and simple movement create quick competition.
+Use for future GameIO mode: zone capture or area control.
+
+12. TETR.IO — https://tetr.io
+Lesson: polished UI and responsive controls can make a simple game feel premium.
+Use for GameIO: crisp menus, fast controls, scoreboards.
+
+13. Roblox — https://www.roblox.com
+Lesson: a hub of many experiences works when avatars, portals, and social presence are connected.
+Use for GameIO: one lobby, many game doors, friends visible. Do not copy Roblox visuals.
+
+14. Fall Guys — https://www.fallguys.com
+Lesson: obstacle courses work when goals are readable and failure is funny.
+Use for Obby Run: bright obstacles, short rounds, clear finish.
+
+15. Mario Kart 8 Deluxe — https://mariokart8.nintendo.com
+Lesson: arcade racing is about readable tracks, boost moments, and fun handling.
+Use for Cars / Drift: boost pads, simple laps, drift score. Do not copy Nintendo assets.
+
+More build guidance:
+- Start with one complete vertical slice: create room, join room, lobby, Fishana, score, results.
+- After that, add Cars and Badaam Saat.
+- Do not add 3D until one full multiplayer round works.
+- If 3D is added, make the 3D lobby optional first, not required.
+- Keep Firebase data small: rooms/{code}/players, currentGame, status, scores.
+- Do not sync canvas positions every frame unless necessary.
+- For action games, each player can play locally and only submit final score for the MVP.
 
 Acceptance criteria:
 1. Create room works.
