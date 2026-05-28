@@ -35,6 +35,20 @@ export const GAMES = {
     description: 'Parkour obstacle course',
     type: '3d',
     players: 'multiplayer'
+  },
+  quiz: {
+    name: 'Quiz Master',
+    icon: '🧠',
+    description: 'Answer trivia questions',
+    type: '2d',
+    players: 'multiplayer'
+  },
+  mathdash: {
+    name: 'Math Dash',
+    icon: '🔢',
+    description: 'Solve math problems fast',
+    type: '2d',
+    players: 'multiplayer'
   }
 };
 
