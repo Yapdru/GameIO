@@ -3,6 +3,8 @@
 import { Screen, screenManager } from '../screens.js';
 import { gameState } from '../state.js';
 import { firebase } from '../firebase.js';
+import { GAMES } from '../config.js';
+import { ThreeWorld } from '../three-world.js';
 import { FishanaGame } from '../games/fishana.js';
 import { CarsGame } from '../games/cars.js';
 import { BadaamGame } from '../games/badaam.js';
@@ -24,6 +26,10 @@ export class GameScreen extends Screen {
     this.element.style.display = 'flex';
     this.element.style.flexDirection = 'column';
     this.element.style.background = '#000';
+
+    const gameKey = gameState.currentGame;
+    const gameConfig = GAMES[gameKey];
+    const is3D = gameConfig && gameConfig.type === '3d';
 
     // HUD
     const hud = this.createElement('div', 'flex justify-between items-center', '');
@@ -65,8 +71,29 @@ export class GameScreen extends Screen {
     this.element.appendChild(hud);
     this.element.appendChild(canvasContainer);
 
-    // Load game based on currentGame
-    this.loadGame(canvas);
+    // Load game based on type
+    if (is3D) {
+      this.loadGame3D(canvas);
+    } else {
+      this.loadGame(canvas);
+    }
+  }
+
+  async loadGame3D(canvas) {
+    const gameKey = gameState.currentGame;
+
+    // Initialize ThreeWorld for 3D games
+    this.game = new ThreeWorld(canvas, { type: 'game', gameKey });
+    this.game.start();
+
+    // Load and build the game-specific world
+    try {
+      const worldModule = await import(`../worlds/${gameKey}-world.js`);
+      const worldData = worldModule[`build${gameKey.charAt(0).toUpperCase() + gameKey.slice(1)}World`](this.game.scene);
+      this.game.worldData = worldData;
+    } catch (e) {
+      console.warn(`Could not load world for ${gameKey}:`, e);
+    }
   }
 
   loadGame(canvas) {
