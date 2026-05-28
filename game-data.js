@@ -28,12 +28,39 @@ export const GAME_DATA = {
 };
 
 export const AVATAR_PARTS={
-  face:['😎','🐟','🏎️','🚙','🤖','🧑‍🚀','🦖','🦸','🐱','🐼','🐉','🦈','🚀','🧑'],
-  body:['🧊','🧥','🦺','🛡️','🎽','🚀','🏁','🧍'],
-  acc:['⚡','👑','🎧','💎','🔥','⭐','🏆','🪽']
+  face:['😎','🐟','🏎️','🚙','🤖','🧑‍🚀','🦖','🦸','🐱','🐼','🐉','🦈','🚀','🧑','👽','🤠','🧛','🧞','🧌','🤡','👹','🦁','🐯','🐻','🦊','🦝','🐨','🐸','🦗','🦗','🦎','🦖','🦕','🐢','🐍','🦗','🦟','🦗'],
+  body:['🧊','🧥','🦺','🛡️','🎽','🚀','🏁','🧍','👔','🥻','👕','🩳','🧦','🧤','🧣','👘','🥼','🥽','⛑️','💼','🎓','👑'],
+  acc:['⚡','👑','🎧','💎','🔥','⭐','🏆','🪽','🎖️','🏅','📿','💍','⌚','🕶️','🥿','👟','👞','👠','💄','💋','👄','👃','👂','👁️','🧠','❤️','💙','💚','💛']
 };
 
-export function defaultOrder(){return ['hub','fishana','cars','badamsat','npat','rally','spacedash','dino'];}
-export function megaOrder(){return Object.keys(GAME_DATA);}
-export function racingOrder(){return ['hub','cars','rally','gt','kart','ice'];}
-export function socialOrder(){return ['hub','fishana','obby','arena','badamsat','charades'];}
+export const QUIZ_QUESTIONS={
+  npat:[
+    {q:'Letter A - Name, Place, Animal, Thing',a:['Arjun, America, Ant, Apple','Alex, Africa, Albatross, Armor','Andrew, Australia, Aardvark, Anchor','Arthur, Austria, Antelope, Arrow']},
+    {q:'Letter P - Name, Place, Animal, Thing',a:['Priya, Paris, Parrot, Pencil','Peter, Prague, Penguin, Pizza','Paul, Portugal, Pig, Plate','Patrick, Poland, Panda, Pen']},
+  ],
+  charades:[
+    {q:'Act like a zombie at a wedding',a:['Groaning stiff','Confused dancing','Eating cake messily','Slow walk']},
+    {q:'Act like you just won the lottery',a:['Jump & scream','Cry happy tears','Do a victory dance','Hug everyone']},
+  ],
+  character:[
+    {q:'Movie character: "May the Force be with you"',a:['Yoda','Darth Vader','Luke Skywalker','Obi-Wan Kenobi']},
+    {q:'Movie character: "Here\'s looking at you, kid"',a:['Casablanca','Titanic','Godfather','Pulp Fiction']},
+  ],
+  facetalk:[
+    {q:'Make the silliest expression possible',a:['Max silliness','Cute factor','Comedy gold','Ultra cool']},
+    {q:'Mimic a surprised celebrity',a:['Shocked face','Jaw drop','Wide eyes','Eyebrow wiggle']},
+  ],
+  bluff:[
+    {q:'Player claims: "I have all 4 aces"',a:['Call bluff!','Believe totally','Raise bet','Ask questions']},
+  ],
+  funnyai:[
+    {q:'AI says: "I definitely need coffee"',a:['Roast it hard','Believe it','Laugh together','Run away']},
+  ],
+};
+
+export function getRandomQuestion(gameKey){const questions=QUIZ_QUESTIONS[gameKey]||[];return questions.length>0?questions[Math.floor(Math.random()*questions.length)]:{q:'Ready to play?',a:['Yes!','Absolutely!','Let\'s go!','More!']};};
+
+export function defaultOrder(){return ['hub','fishana','cars','badamsat','npat','charades','character','facetalk','spacedash','dino'];}
+export function megaOrder(){const keys=Object.keys(GAME_DATA);return keys.filter(k=>k!=='hub').sort(()=>Math.random()-.5);}
+export function racingOrder(){return ['hub','cars','rally','gt','kart','ice','cyber','volcano'];}
+export function socialOrder(){return ['hub','fishana','obby','arena','badamsat','charades','character','facetalk','bluff','funnyai'];}
