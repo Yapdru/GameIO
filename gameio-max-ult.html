@@ -2,17 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0f0f1e">
   <title>GameIO MAX ULT - Multiplayer Game Platform</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
       font-family: 'Press Start 2P', 'Courier New', monospace;
-      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      background: linear-gradient(135deg, #0a0a15, #1a1a2e);
       color: #00ff00;
       overflow: hidden;
       image-rendering: pixelated;
+      touch-action: manipulation;
+    }
+
+    /* Build GameIO Screen */
+    #buildScreen {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #000000, #0a0a15);
+      z-index: 1001;
+      text-align: center;
+      animation: fadeIn 0.8s;
+    }
+
+    .build-text {
+      font-size: 32px;
+      color: #00ff00;
+      text-shadow: 0 0 20px #00ff00, 0 0 40px #00aa00;
+      letter-spacing: 2px;
+      animation: buildPulse 1.5s infinite;
     }
 
     #boot {
@@ -24,6 +52,59 @@
       z-index: 1000;
       text-align: center;
       animation: fadeIn 0.5s;
+    }
+
+    /* Elevator Transition */
+    #elevatorScreen {
+      position: fixed;
+      inset: 0;
+      display: none;
+      grid-place-items: center;
+      background: linear-gradient(135deg, #1a1a2e, #0f0f1e);
+      z-index: 900;
+      text-align: center;
+    }
+
+    .elevator {
+      width: 200px;
+      height: 300px;
+      border: 3px solid #00ff00;
+      background: #1a1a2e;
+      box-shadow: 0 0 30px #00ff00;
+      position: relative;
+      margin: 20px auto;
+      animation: elevatorOpen 2s ease-in-out;
+    }
+
+    .elevator-door {
+      position: absolute;
+      height: 100%;
+      width: 50%;
+      background: #2a2a3e;
+      border: 2px solid #00ff00;
+      top: 0;
+    }
+
+    .elevator-door.left { left: 0; }
+    .elevator-door.right { right: 0; }
+
+    .elevator-door.opening.left {
+      animation: doorOpenLeft 1.5s ease-out forwards;
+    }
+
+    .elevator-door.opening.right {
+      animation: doorOpenRight 1.5s ease-out forwards;
+    }
+
+    .elevator-text {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      color: #00ff00;
+      font-size: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
     }
 
     .title {
@@ -229,6 +310,7 @@
       image-rendering: pixelated;
     }
 
+    /* Lobby with Visual Elements */
     .lobby-container {
       display: none;
       width: 100%;
@@ -236,6 +318,14 @@
       background: linear-gradient(135deg, #0f0f1e, #1a1a2e);
       padding: 20px;
       overflow-y: auto;
+      position: relative;
+    }
+
+    .lobby-scene {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
     }
 
     .lobby-title {
@@ -243,7 +333,90 @@
       color: #00ff00;
       text-shadow: 0 0 10px #00ff00;
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 10px;
+    }
+
+    .lobby-subtitle {
+      font-size: 12px;
+      color: #00aa00;
+      margin-bottom: 20px;
+    }
+
+    /* Visual Lobby Elements */
+    .lobby-furniture {
+      margin: 30px 0;
+      font-size: 48px;
+      letter-spacing: 10px;
+      animation: furnitureFloat 2s ease-in-out infinite;
+    }
+
+    .sofa { animation-delay: 0s; }
+    .ottoman { animation-delay: 0.5s; }
+    .elevator-lobby { animation-delay: 1s; }
+
+    /* Parking Lot Screen */
+    #parkingLot {
+      display: none;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a2540, #0a1520);
+      padding: 20px;
+      text-align: center;
+      overflow-y: auto;
+    }
+
+    .parking-scene {
+      margin-top: 20px;
+    }
+
+    .player-car {
+      font-size: 48px;
+      margin: 20px 0;
+      animation: carBounce 1s ease-in-out infinite;
+    }
+
+    .player-name-tag {
+      font-size: 14px;
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+      margin-top: 10px;
+      padding: 10px;
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid #00ff00;
+      border-radius: 5px;
+    }
+
+    .friends-list {
+      margin: 30px auto;
+      max-width: 600px;
+      text-align: left;
+    }
+
+    .friends-title {
+      font-size: 14px;
+      color: #00ff00;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .friend-item {
+      background: rgba(0, 255, 0, 0.05);
+      border: 1px solid #00aa00;
+      padding: 8px;
+      margin: 5px 0;
+      border-radius: 4px;
+      font-size: 10px;
+    }
+
+    .message-banner {
+      font-size: 14px;
+      color: #ff6600;
+      text-shadow: 0 0 10px #ff6600;
+      margin: 20px 0;
+      padding: 15px;
+      background: rgba(255, 102, 0, 0.1);
+      border: 2px solid #ff6600;
+      border-radius: 8px;
     }
 
     .games-grid {
@@ -446,6 +619,17 @@
       50% { text-shadow: 0 0 20px #00ff00; }
     }
 
+    @keyframes buildPulse {
+      0%, 100% {
+        text-shadow: 0 0 20px #00ff00, 0 0 40px #00aa00;
+        transform: scale(1);
+      }
+      50% {
+        text-shadow: 0 0 40px #00ff00, 0 0 80px #00ff00;
+        transform: scale(1.05);
+      }
+    }
+
     @keyframes pixelShift {
       0% { transform: translate(0, 0); }
       25% { transform: translate(2px, 0); }
@@ -453,9 +637,54 @@
       75% { transform: translate(0, 2px); }
       100% { transform: translate(0, 0); }
     }
+
+    @keyframes elevatorOpen {
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes doorOpenLeft {
+      from { transform: translateX(0); }
+      to { transform: translateX(-100%); }
+    }
+
+    @keyframes doorOpenRight {
+      from { transform: translateX(0); }
+      to { transform: translateX(100%); }
+    }
+
+    @keyframes furnitureFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes carBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    @keyframes lightningFlash {
+      0%, 100% { opacity: 1; }
+      10%, 15% { opacity: 0; }
+      20%, 100% { opacity: 1; }
+    }
   </style>
 </head>
 <body>
+  <!-- Build GameIO Screen -->
+  <div id="buildScreen">
+    <div class="build-text">⚡ Build GameIO ⚡</div>
+  </div>
+
+  <!-- Elevator Transition Screen -->
+  <div id="elevatorScreen">
+    <div class="elevator">
+      <div class="elevator-door left opening"></div>
+      <div class="elevator-door right opening"></div>
+      <div class="elevator-text">ENTERING LOBBY</div>
+    </div>
+  </div>
+
   <!-- Boot Screen -->
   <div id="boot">
     <div>
@@ -504,12 +733,23 @@
 
   <!-- Lobby Screen -->
   <div class="lobby-container" id="lobby">
-    <div class="lobby-title">◆ GAMEIO MAX ULT LOBBY ◆</div>
-    <div style="text-align: center; color: #00ff00; margin-bottom: 30px; font-size: 12px;">
-      "Oh No... I have to meet my friends!"
+    <div class="lobby-scene">
+      <div class="lobby-title">◆ GAMEIO MAX ULT ◆</div>
+      <div class="lobby-subtitle">THE LOUNGE</div>
+
+      <!-- Visual Lobby Elements -->
+      <div class="lobby-furniture sofa">🛋️ 🛋️</div>
+      <div class="lobby-furniture ottoman">🪑 🪑 🪑</div>
+      <div class="lobby-furniture elevator-lobby">🚪 🚪 🚪</div>
+
+      <div style="margin-top: 30px; font-size: 12px; color: #00ff00;">
+        Press <span style="color: #ffff00;">J</span> Quick Join |
+        <span style="color: #ffff00;">C</span> Create |
+        <span style="color: #ffff00;">CJ</span> Join Code
+      </div>
     </div>
-    <div class="games-grid">
-      <div class="game-card" onclick="startGameMode('fishana')">
+      <div class="games-grid">
+        <div class="game-card" onclick="startGameMode('fishana')">
         <div class="game-icon">🐠</div>
         <div class="game-name">FISHANA</div>
       </div>
@@ -544,6 +784,25 @@
       <div class="game-card" onclick="startGameMode('facetalk')">
         <div class="game-icon">💬</div>
         <div class="game-name">FACETALK</div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Parking Lot Screen -->
+  <div id="parkingLot">
+    <div class="lobby-title">◆ PARKING LOT ◆</div>
+    <div class="message-banner">Oh No... I have to meet my friends! 😰</div>
+    <div class="parking-scene">
+      <div class="player-car" id="playerCarDisplay">🚗</div>
+      <div class="player-name-tag" id="playerNameDisplay">Your Name Here</div>
+      <div style="margin-top: 20px; font-size: 12px; color: #00aa00;">
+        Press <span style="color: #ffff00;">E</span> to Enter Car |
+        <span style="color: #ffff00;">L</span> for Lobby
+      </div>
+      <div class="friends-list" id="friendsList">
+        <div class="friends-title">👥 FRIENDS IN PARKING LOT</div>
+        <div class="friend-item">Loading friends...</div>
       </div>
     </div>
   </div>
@@ -625,20 +884,56 @@
       roomCode: generateRoomCode(),
       currentGame: null,
       selectedAvatar: null,
-      selectedCar: null
+      selectedCar: null,
+      gameStarted: false,
+      currentScreen: 'build', // build, boot, avatar, lobby, parking, game
+      friends: [
+        { name: 'Alex', avatar: '😎', car: '🚕', status: 'waiting' },
+        { name: 'Sam', avatar: '🤖', car: '🏎️', status: 'in-game' },
+        { name: 'Jordan', avatar: '👽', car: '🚙', status: 'waiting' }
+      ]
     };
 
-    // Audio (Kenny G Songbird)
-    let audioContext = null;
+    // Audio Management
     let currentAudio = null;
 
     function generateRoomCode() {
       return Math.random().toString(36).substring(2, 8).toUpperCase();
     }
 
+    // Initialize on page load
+    window.addEventListener('load', () => {
+      showBuildScreen();
+    });
+
+    // Show Build GameIO Screen
+    function showBuildScreen() {
+      document.getElementById('buildScreen').style.display = 'grid';
+      setTimeout(() => {
+        fadeOutElement('buildScreen');
+        setTimeout(() => {
+          document.getElementById('buildScreen').style.display = 'none';
+          showBootScreen();
+        }, 500);
+      }, 3000);
+    }
+
+    function showBootScreen() {
+      document.getElementById('boot').style.display = 'grid';
+      gameState.currentScreen = 'boot';
+    }
+
     function startGame() {
       document.getElementById('boot').style.display = 'none';
       document.getElementById('avatar-creator').style.display = 'block';
+      gameState.currentScreen = 'avatar';
+    }
+
+    // Fade out animation
+    function fadeOutElement(elementId) {
+      const el = document.getElementById(elementId);
+      el.style.opacity = '0';
+      el.style.transition = 'opacity 0.5s ease-out';
     }
 
     function selectAvatar(element, emoji) {
@@ -674,29 +969,95 @@
       }
 
       gameState.playerName = name;
+      gameState.gameStarted = true;
 
-      // Play Kenny G Songbird audio (if available)
+      // Hide avatar creator
+      document.getElementById('avatar-creator').style.display = 'none';
+
+      // Show elevator transition with Kenny G audio
+      showElevatorTransition();
+    }
+
+    function showElevatorTransition() {
+      const elevator = document.getElementById('elevatorScreen');
+      elevator.style.display = 'grid';
+      gameState.currentScreen = 'elevator';
+
+      // Play Kenny G Songbird during transition
       playTransitionMusic();
 
-      // Hide avatar creator and show lobby
-      document.getElementById('avatar-creator').style.display = 'none';
-      document.getElementById('lobby').style.display = 'block';
-      document.getElementById('hud').style.display = 'block';
+      // Simulate elevator doors opening
+      const doors = document.querySelectorAll('.elevator-door');
+      setTimeout(() => {
+        doors.forEach(door => door.classList.add('opening'));
+      }, 300);
 
-      // Update HUD
+      // After elevator animation, show parking lot
+      setTimeout(() => {
+        elevator.style.display = 'none';
+        showParkingLot();
+      }, 3000);
+    }
+
+    function showParkingLot() {
+      // Hide previous screens
+      document.getElementById('avatar-creator').style.display = 'none';
+      document.getElementById('lobby').style.display = 'none';
+
+      // Show parking lot
+      const parking = document.getElementById('parkingLot');
+      parking.style.display = 'block';
+      gameState.currentScreen = 'parking';
+
+      // Update player display
+      document.getElementById('playerCarDisplay').textContent = gameState.car;
+      document.getElementById('playerNameDisplay').textContent = `${gameState.avatar} ${gameState.playerName}`;
+
+      // Update friends list
+      updateFriendsList();
+
+      // Show HUD
+      document.getElementById('hud').style.display = 'block';
       document.getElementById('player-info').textContent = `${gameState.avatar} ${gameState.playerName}`;
       document.getElementById('room-code').textContent = `Room: ${gameState.roomCode}`;
 
-      // Animate in
+      // Animation
       animateStartupSequence();
     }
 
+    function updateFriendsList() {
+      const friendsList = document.getElementById('friendsList');
+      let html = '<div class="friends-title">👥 FRIENDS IN PARKING LOT</div>';
+
+      gameState.friends.forEach(friend => {
+        html += `<div class="friend-item">${friend.avatar} ${friend.name} - ${friend.car} [${friend.status}]</div>`;
+      });
+
+      friendsList.innerHTML = html;
+    }
+
     function playTransitionMusic() {
-      // Kenny G Songbird would play here
-      // Using the existing MP3 file: 'Kenny G - Songbird (Offiical Video).mp3'
-      const audio = new Audio('Kenny G - Songbird (Offiical Video).mp3');
-      audio.volume = 0.5;
-      audio.play().catch(e => console.log('Audio playback failed:', e));
+      // Stop current audio if playing
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+      }
+
+      // Try to play Kenny G Songbird
+      const audioFiles = [
+        'Kenny G - Songbird (Offiical Video).mp3',
+        'Kenny G - Songbird.mp3',
+        'songbird.mp3',
+        'kenny-g-songbird.mp3'
+      ];
+
+      // Attempt to load and play first available audio file
+      const audioPath = audioFiles[0];
+      currentAudio = new Audio(audioPath);
+      currentAudio.volume = 0.3;
+      currentAudio.play().catch(e => {
+        console.log('Audio playback unavailable (file may not exist)');
+      });
     }
 
     function animateStartupSequence() {
@@ -749,6 +1110,7 @@
 
     function startGameMode(gameName) {
       gameState.currentGame = gameName;
+      gameState.currentScreen = 'game';
 
       // Hide lobby and show game screen
       document.getElementById('lobby').style.display = 'none';
@@ -1306,35 +1668,86 @@
     // Keyboard shortcuts
     let keyBuffer = '';
     document.addEventListener('keydown', (e) => {
-      keyBuffer += e.key.toUpperCase();
-      if (keyBuffer.length > 2) keyBuffer = keyBuffer.slice(-2);
+      const key = e.key.toUpperCase();
 
-      if (e.key === 'j' || e.key === 'J') {
-        quickJoin();
+      // Handle common keys
+      if (key === 'ESCAPE') {
+        handleEscapeKey();
+        return;
       }
-      if (e.key === 'c' || e.key === 'C') {
-        if (keyBuffer === 'CJ') {
-          joinWithCode();
+
+      // For CJ and JC combinations
+      if (key === 'J' || key === 'C') {
+        keyBuffer += key;
+        if (keyBuffer.length > 2) keyBuffer = keyBuffer.slice(-2);
+
+        // Check for combinations
+        if (key === 'J' && gameState.currentScreen !== 'boot') {
+          quickJoin();
           keyBuffer = '';
-        } else {
+        } else if (key === 'C' && gameState.currentScreen !== 'boot') {
           createServer();
+          keyBuffer = '';
         }
-      }
-      if (e.key === 'Escape') {
-        // Close modals
-        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
-        keyBuffer = '';
 
-        if (gameState.currentGame) {
-          gameState.currentGame = null;
-          document.getElementById('game-canvas').style.display = 'none';
-          document.getElementById('lobby').style.display = 'block';
-        }
+        // Reset buffer after 500ms
+        setTimeout(() => {
+          if (keyBuffer === 'C' || keyBuffer === 'J') {
+            keyBuffer = '';
+          }
+        }, 500);
       }
 
-      // Reset buffer after 500ms
-      setTimeout(() => { if (keyBuffer === 'C') keyBuffer = ''; }, 500);
+      // Parking lot specific keys
+      if (gameState.currentScreen === 'parking') {
+        if (key === 'E') {
+          enterCar();
+        } else if (key === 'L') {
+          goToLobby();
+        }
+      }
+
+      // Lobby specific keys
+      if (gameState.currentScreen === 'lobby') {
+        if (key === 'P') {
+          backToParking();
+        }
+      }
     });
+
+    function handleEscapeKey() {
+      // Close modals
+      document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+
+      if (gameState.currentGame) {
+        gameState.currentGame = null;
+        document.getElementById('game-canvas').style.display = 'none';
+        document.getElementById('lobby').style.display = 'block';
+        gameState.currentScreen = 'lobby';
+      } else if (gameState.currentScreen === 'lobby') {
+        backToParking();
+      } else if (gameState.currentScreen === 'parking') {
+        // Could go back further if needed
+      }
+    }
+
+    function enterCar() {
+      // Transition to lobby via elevator
+      showElevatorTransition();
+    }
+
+    function goToLobby() {
+      document.getElementById('parkingLot').style.display = 'none';
+      document.getElementById('lobby').style.display = 'block';
+      gameState.currentScreen = 'lobby';
+      playTransitionMusic();
+    }
+
+    function backToParking() {
+      document.getElementById('lobby').style.display = 'none';
+      document.getElementById('parkingLot').style.display = 'block';
+      gameState.currentScreen = 'parking';
+    }
 
     // Window resize
     window.addEventListener('resize', () => {
