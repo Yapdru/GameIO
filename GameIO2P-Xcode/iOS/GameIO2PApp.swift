@@ -297,7 +297,7 @@ struct MotionStatusView: View {
                     Text("Vehicle stopped")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(Color(red: 0.1, green: 0.4, blue: 0.8))
-                    let remaining = Int(max(0, motionManager.stationaryThreshold - motionManager.stationaryDuration))
+                    let remaining = Int(ceil(max(0, motionManager.stationaryThreshold - motionManager.stationaryDuration)))
                     if remaining > 0 {
                         Text("Game available in \(remaining)s...")
                             .font(.system(size: 12))

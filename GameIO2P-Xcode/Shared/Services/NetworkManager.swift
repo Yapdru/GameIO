@@ -208,9 +208,16 @@ class NetworkManager: NSObject, ObservableObject {
         sendMessage(.heartbeat)
     }
 
+    private var pingTime: TimeInterval = 0
+
     private func recordLatency() {
-        let timestamp = Date().timeIntervalSince1970
-        latency = (Date().timeIntervalSince1970 - timestamp) * 1000
+        if pingTime == 0 {
+            pingTime = Date().timeIntervalSince1970
+        } else {
+            let elapsed = (Date().timeIntervalSince1970 - pingTime) * 1000
+            latency = elapsed / 2
+            pingTime = 0
+        }
     }
 
     // MARK: - Bonjour Service Management

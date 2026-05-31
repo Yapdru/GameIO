@@ -12,6 +12,7 @@ struct SpeedMatchGameView: View {
     @State private var timeRemaining: Int = 60
     @State private var gameActive: Bool = true
     @State private var speedInput: CGFloat = 0
+    @State private var gameTimer: Timer?
 
     var speedDifference: CGFloat {
         abs(playerSpeed - targetSpeed)

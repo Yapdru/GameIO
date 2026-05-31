@@ -1,0 +1,497 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		/* Shared Models */
+		AA000001 /* GameState.swift in Sources */              = {isa = PBXBuildFile; fileRef = BB000001 /* GameState.swift */; };
+		AA000002 /* PlayerProfile.swift in Sources */          = {isa = PBXBuildFile; fileRef = BB000002 /* PlayerProfile.swift */; };
+		/* Shared Managers */
+		AA000010 /* MotionManager.swift in Sources */          = {isa = PBXBuildFile; fileRef = BB000010 /* MotionManager.swift */; };
+		AA000011 /* AudioManager.swift in Sources */           = {isa = PBXBuildFile; fileRef = BB000011 /* AudioManager.swift */; };
+		/* Shared Systems */
+		AA000020 /* ParticleSystem.swift in Sources */         = {isa = PBXBuildFile; fileRef = BB000020 /* ParticleSystem.swift */; };
+		/* Shared Racing */
+		AA000030 /* RaceEngine.swift in Sources */             = {isa = PBXBuildFile; fileRef = BB000030 /* RaceEngine.swift */; };
+		/* CarPlay */
+		AA000040 /* CarPlaySceneDelegate.swift in Sources */   = {isa = PBXBuildFile; fileRef = BB000040 /* CarPlaySceneDelegate.swift */; };
+		/* iOS */
+		AA000050 /* GameIO2PApp.swift in Sources */            = {isa = PBXBuildFile; fileRef = BB000050 /* GameIO2PApp.swift */; };
+		AA000051 /* ContentView.swift in Sources */            = {isa = PBXBuildFile; fileRef = BB000051 /* ContentView.swift */; };
+		/* Resources */
+		AA000100 /* gameio-2p.html in Resources */             = {isa = PBXBuildFile; fileRef = BB000100 /* gameio-2p.html */; };
+		AA000101 /* Assets.xcassets in Resources */            = {isa = PBXBuildFile; fileRef = BB000101 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		BB000001 /* GameState.swift */              = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift;              sourceTree = "<group>"; };
+		BB000002 /* PlayerProfile.swift */          = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerProfile.swift;          sourceTree = "<group>"; };
+		BB000010 /* MotionManager.swift */          = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift;          sourceTree = "<group>"; };
+		BB000011 /* AudioManager.swift */           = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift;           sourceTree = "<group>"; };
+		BB000020 /* ParticleSystem.swift */         = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticleSystem.swift;         sourceTree = "<group>"; };
+		BB000030 /* RaceEngine.swift */             = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceEngine.swift;             sourceTree = "<group>"; };
+		BB000040 /* CarPlaySceneDelegate.swift */   = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarPlaySceneDelegate.swift;   sourceTree = "<group>"; };
+		BB000050 /* GameIO2PApp.swift */            = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameIO2PApp.swift;            sourceTree = "<group>"; };
+		BB000051 /* ContentView.swift */            = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift;            sourceTree = "<group>"; };
+		BB000100 /* gameio-2p.html */               = {isa = PBXFileReference; lastKnownFileType = text.html; path = "gameio-2p.html";                    sourceTree = "<group>"; };
+		BB000101 /* Assets.xcassets */              = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets;           sourceTree = "<group>"; };
+		CC000001 /* GameIO2P.app */                 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GameIO2P.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC000002 /* GameIO2P-watchOS.app */         = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GameIO2P-watchOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC000003 /* GameIO2P-tvOS.app */            = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GameIO2P-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CC000004 /* GameIO2P-macOS.app */           = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GameIO2P-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD000001 /* Info-iOS.plist */               = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist";               sourceTree = "<group>"; };
+		DD000002 /* Info-tvOS.plist */              = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-tvOS.plist";              sourceTree = "<group>"; };
+		DD000003 /* Info-watchOS.plist */           = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-watchOS.plist";           sourceTree = "<group>"; };
+		DD000004 /* Info-macOS.plist */             = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-macOS.plist";             sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		ROOT_GROUP = {
+			isa = PBXGroup;
+			children = (
+				SHARED_GROUP,
+				IOS_GROUP,
+				IPAD_GROUP,
+				MACOS_GROUP,
+				WATCHOS_GROUP,
+				TVOS_GROUP,
+				CARPLAY_GROUP,
+				RESOURCES_GROUP,
+				CONFIG_GROUP,
+				PRODUCTS_GROUP,
+			);
+			sourceTree = "<group>";
+		};
+		PRODUCTS_GROUP = {
+			isa = PBXGroup;
+			children = (
+				CC000001 /* GameIO2P.app */,
+				CC000002 /* GameIO2P-watchOS.app */,
+				CC000003 /* GameIO2P-tvOS.app */,
+				CC000004 /* GameIO2P-macOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		SHARED_GROUP = {
+			isa = PBXGroup;
+			children = (
+				SHARED_MODELS_GROUP,
+				SHARED_MANAGERS_GROUP,
+				SHARED_SYSTEMS_GROUP,
+				SHARED_RACING_GROUP,
+				SHARED_GAMES_GROUP,
+				SHARED_SERVICES_GROUP,
+				SHARED_UTILITIES_GROUP,
+				SHARED_EXTENSIONS_GROUP,
+				SHARED_MULTIPLAYER_GROUP,
+			);
+			name = Shared;
+			sourceTree = "<group>";
+		};
+		SHARED_MODELS_GROUP = {
+			isa = PBXGroup;
+			children = (
+				BB000001 /* GameState.swift */,
+				BB000002 /* PlayerProfile.swift */,
+			);
+			name = Models;
+			path = Shared/Models;
+			sourceTree = "<group>";
+		};
+		SHARED_MANAGERS_GROUP = {
+			isa = PBXGroup;
+			children = (
+				BB000010 /* MotionManager.swift */,
+				BB000011 /* AudioManager.swift */,
+			);
+			name = Managers;
+			path = Shared/Managers;
+			sourceTree = "<group>";
+		};
+		SHARED_SYSTEMS_GROUP = {
+			isa = PBXGroup;
+			children = (
+				BB000020 /* ParticleSystem.swift */,
+			);
+			name = Systems;
+			path = Shared/Systems;
+			sourceTree = "<group>";
+		};
+		SHARED_RACING_GROUP = {
+			isa = PBXGroup;
+			children = (
+				BB000030 /* RaceEngine.swift */,
+			);
+			name = Racing;
+			path = Shared/Racing;
+			sourceTree = "<group>";
+		};
+		SHARED_GAMES_GROUP     = { isa = PBXGroup; name = Games;       path = Shared/Games;       sourceTree = "<group>"; children = (); };
+		SHARED_SERVICES_GROUP  = { isa = PBXGroup; name = Services;    path = Shared/Services;    sourceTree = "<group>"; children = (); };
+		SHARED_UTILITIES_GROUP = { isa = PBXGroup; name = Utilities;   path = Shared/Utilities;   sourceTree = "<group>"; children = (); };
+		SHARED_EXTENSIONS_GROUP = { isa = PBXGroup; name = Extensions; path = Shared/Extensions;  sourceTree = "<group>"; children = (); };
+		SHARED_MULTIPLAYER_GROUP = { isa = PBXGroup; name = Multiplayer; path = Shared/Multiplayer; sourceTree = "<group>"; children = (); };
+		IOS_GROUP = {
+			isa = PBXGroup;
+			children = (
+				BB000050 /* GameIO2PApp.swift */,
+				BB000051 /* ContentView.swift */,
+			);
+			name = iOS;
+			path = iOS;
+			sourceTree = "<group>";
+		};
+		IPAD_GROUP    = { isa = PBXGroup; name = iPad;     path = iPad;     sourceTree = "<group>"; children = (); };
+		MACOS_GROUP   = { isa = PBXGroup; name = macOS;    path = macOS;    sourceTree = "<group>"; children = (); };
+		WATCHOS_GROUP = { isa = PBXGroup; name = watchOS;  path = watchOS;  sourceTree = "<group>"; children = (); };
+		TVOS_GROUP    = { isa = PBXGroup; name = tvOS;     path = tvOS;     sourceTree = "<group>"; children = (); };
+		CARPLAY_GROUP = {
+			isa = PBXGroup;
+			children = (
+				BB000040 /* CarPlaySceneDelegate.swift */,
+			);
+			name = CarPlay;
+			path = CarPlayExt;
+			sourceTree = "<group>";
+		};
+		RESOURCES_GROUP = {
+			isa = PBXGroup;
+			children = (
+				BB000100 /* gameio-2p.html */,
+				BB000101 /* Assets.xcassets */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		CONFIG_GROUP = {
+			isa = PBXGroup;
+			children = (
+				DD000001 /* Info-iOS.plist */,
+				DD000002 /* Info-tvOS.plist */,
+				DD000003 /* Info-watchOS.plist */,
+				DD000004 /* Info-macOS.plist */,
+			);
+			name = Config;
+			path = Config;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		TARGET_IOS = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = XCCONFIGLIST_IOS;
+			buildPhases = (
+				SOURCES_IOS,
+				RESOURCES_IOS,
+				FRAMEWORKS_IOS,
+			);
+			buildRules = ();
+			dependencies = ();
+			name = "GameIO2P";
+			productName = "GameIO2P";
+			productReference = CC000001 /* GameIO2P.app */;
+			productType = "com.apple.product-type.application";
+		};
+		TARGET_WATCHOS = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = XCCONFIGLIST_WATCHOS;
+			buildPhases = (SOURCES_WATCHOS, RESOURCES_WATCHOS, FRAMEWORKS_WATCHOS);
+			buildRules = ();
+			dependencies = ();
+			name = "GameIO2P-watchOS";
+			productName = "GameIO2P-watchOS";
+			productReference = CC000002 /* GameIO2P-watchOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		TARGET_TVOS = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = XCCONFIGLIST_TVOS;
+			buildPhases = (SOURCES_TVOS, RESOURCES_TVOS, FRAMEWORKS_TVOS);
+			buildRules = ();
+			dependencies = ();
+			name = "GameIO2P-tvOS";
+			productName = "GameIO2P-tvOS";
+			productReference = CC000003 /* GameIO2P-tvOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		TARGET_MACOS = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = XCCONFIGLIST_MACOS;
+			buildPhases = (SOURCES_MACOS, RESOURCES_MACOS, FRAMEWORKS_MACOS);
+			buildRules = ();
+			dependencies = ();
+			name = "GameIO2P-macOS";
+			productName = "GameIO2P-macOS";
+			productReference = CC000004 /* GameIO2P-macOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		PROJECT = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					TARGET_IOS     = { CreatedOnToolsVersion = 15.0; };
+					TARGET_WATCHOS = { CreatedOnToolsVersion = 15.0; };
+					TARGET_TVOS    = { CreatedOnToolsVersion = 15.0; };
+					TARGET_MACOS   = { CreatedOnToolsVersion = 15.0; };
+				};
+			};
+			buildConfigurationList = XCCONFIGLIST_PROJECT;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base);
+			mainGroup = ROOT_GROUP;
+			productRefGroup = PRODUCTS_GROUP;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				TARGET_IOS,
+				TARGET_WATCHOS,
+				TARGET_TVOS,
+				TARGET_MACOS,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		SOURCES_IOS = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000001 /* GameState.swift */,
+				AA000002 /* PlayerProfile.swift */,
+				AA000010 /* MotionManager.swift */,
+				AA000011 /* AudioManager.swift */,
+				AA000020 /* ParticleSystem.swift */,
+				AA000030 /* RaceEngine.swift */,
+				AA000040 /* CarPlaySceneDelegate.swift */,
+				AA000050 /* GameIO2PApp.swift */,
+				AA000051 /* ContentView.swift */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		SOURCES_WATCHOS = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (AA000001, AA000002); runOnlyForDeploymentPostprocessing = 0; };
+		SOURCES_TVOS    = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (AA000001, AA000002, AA000020, AA000030); runOnlyForDeploymentPostprocessing = 0; };
+		SOURCES_MACOS   = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (AA000001, AA000002, AA000010, AA000011); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		RESOURCES_IOS     = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (AA000100, AA000101); runOnlyForDeploymentPostprocessing = 0; };
+		RESOURCES_WATCHOS = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (AA000101); runOnlyForDeploymentPostprocessing = 0; };
+		RESOURCES_TVOS    = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (AA000100, AA000101); runOnlyForDeploymentPostprocessing = 0; };
+		RESOURCES_MACOS   = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (AA000100, AA000101); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FRAMEWORKS_IOS     = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		FRAMEWORKS_WATCHOS = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		FRAMEWORKS_TVOS    = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		FRAMEWORKS_MACOS   = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CONFIG_DEBUG_PROJECT = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("DEBUG=1", "$(inherited)");
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CONFIG_RELEASE_PROJECT = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CONFIG_DEBUG_IOS = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"GameIO2P/Preview Content\"";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/Info-iOS.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yapdru.gameio2p";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CONFIG_RELEASE_IOS = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = Config/Info-iOS.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yapdru.gameio2p";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CONFIG_DEBUG_WATCHOS = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Config/Info-watchOS.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yapdru.gameio2p.watchos";
+				SWIFT_VERSION = 5.9;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Debug;
+		};
+		CONFIG_RELEASE_WATCHOS = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Config/Info-watchOS.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yapdru.gameio2p.watchos";
+				SWIFT_VERSION = 5.9;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = Release;
+		};
+		CONFIG_DEBUG_TVOS = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Config/Info-tvOS.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yapdru.gameio2p.tvos";
+				SWIFT_VERSION = 5.9;
+				TVOS_DEPLOYMENT_TARGET = 16.0;
+			};
+			name = Debug;
+		};
+		CONFIG_RELEASE_TVOS = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Config/Info-tvOS.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yapdru.gameio2p.tvos";
+				SWIFT_VERSION = 5.9;
+				TVOS_DEPLOYMENT_TARGET = 16.0;
+			};
+			name = Release;
+		};
+		CONFIG_DEBUG_MACOS = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Config/Info-macOS.plist;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yapdru.gameio2p.macos";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		CONFIG_RELEASE_MACOS = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Config/Info-macOS.plist;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yapdru.gameio2p.macos";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		XCCONFIGLIST_PROJECT  = { isa = XCConfigurationList; buildConfigurations = (CONFIG_DEBUG_PROJECT, CONFIG_RELEASE_PROJECT); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		XCCONFIGLIST_IOS      = { isa = XCConfigurationList; buildConfigurations = (CONFIG_DEBUG_IOS,     CONFIG_RELEASE_IOS);     defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		XCCONFIGLIST_WATCHOS  = { isa = XCConfigurationList; buildConfigurations = (CONFIG_DEBUG_WATCHOS,  CONFIG_RELEASE_WATCHOS); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		XCCONFIGLIST_TVOS     = { isa = XCConfigurationList; buildConfigurations = (CONFIG_DEBUG_TVOS,     CONFIG_RELEASE_TVOS);    defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		XCCONFIGLIST_MACOS    = { isa = XCConfigurationList; buildConfigurations = (CONFIG_DEBUG_MACOS,    CONFIG_RELEASE_MACOS);   defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+
+	};
+	rootObject = PROJECT;
+}
