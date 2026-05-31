@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- App Identity -->
+	<key>CFBundleName</key>
+	<string>GameIO 2P</string>
+	<key>CFBundleDisplayName</key>
+	<string>GameIO 2P</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+
+	<!-- App Icons -->
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>AppIcon</string>
+			</array>
+			<key>UIPrerenderedIcon</key>
+			<false/>
+		</dict>
+	</dict>
+
+	<!-- Launch Screen -->
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+
+	<!-- Supported Orientations — iPhone -->
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+
+	<!-- Supported Orientations — iPad -->
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+
+	<!-- Status Bar -->
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+
+	<!-- Requires Full Screen (for immersive racing) -->
+	<key>UIRequiresFullScreen</key>
+	<false/>
+
+	<!-- Scene Configuration -->
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<true/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+				</dict>
+			</array>
+			<key>CPTemplateApplicationSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>CarPlay Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).CarPlaySceneDelegate</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+
+	<!-- Privacy Permissions -->
+	<key>NSMotionUsageDescription</key>
+	<string>GameIO 2P uses motion sensors to detect driving and ensure you play safely when your vehicle is stopped.</string>
+
+	<key>NSMicrophoneUsageDescription</key>
+	<string>GameIO 2P uses the microphone for voice chat with friends in multiplayer rooms.</string>
+
+	<key>NSCameraUsageDescription</key>
+	<string>GameIO 2P can use the camera for avatar customization features.</string>
+
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>GameIO 2P uses your location for regional leaderboards and finding nearby players.</string>
+
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>GameIO 2P uses Bluetooth for local multiplayer with nearby players.</string>
+
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>GameIO 2P uses local networking for multiplayer games with other players on the same Wi-Fi.</string>
+
+	<!-- Network Security -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>raw.githubusercontent.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<false/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+
+	<!-- Bonjour Services for multiplayer -->
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_gameio2p._tcp</string>
+		<string>_gameio2p._udp</string>
+	</array>
+
+	<!-- GameKit -->
+	<key>GKGameCenterEnabled</key>
+	<true/>
+
+	<!-- Background Modes -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
+
+	<!-- URL Schemes -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>GameIO3P Deep Link</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>gameio2p</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- CarPlay Entitlement -->
+	<key>com.apple.developer.carplay-maps</key>
+	<false/>
+	<key>com.apple.developer.carplay-audio</key>
+	<false/>
+
+	<!-- Minimum iOS Version -->
+	<key>MinimumOSVersion</key>
+	<string>16.0</string>
+
+	<!-- Supports Swift Concurrency -->
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+
+	<!-- App Category -->
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.games</string>
+
+	<!-- Age Rating: E for Everyone -->
+	<key>iTunesRevenueModel</key>
+	<string>FREE</string>
+</dict>
+</plist>
