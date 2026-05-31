@@ -9,7 +9,7 @@ import WatchConnectivity
 // MARK: - Watch App Entry
 
 @main
-struct GameIO2PApp: App {
+struct GameIO3PApp: App {
     @WKApplicationDelegateAdaptor(GameIOWatchAppDelegate.self) var delegate
 
     var body: some Scene {

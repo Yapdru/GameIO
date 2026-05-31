@@ -5,7 +5,7 @@ import SwiftUI
 import RealityKit
 
 @main
-struct GameIO2PVisionApp: App {
+struct GameIO3PVisionApp: App {
     @StateObject private var gameState = GameState.shared
     @StateObject private var motionManager = MotionManager.shared
     @StateObject private var audioManager = AudioManager.shared

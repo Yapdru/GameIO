@@ -251,12 +251,12 @@ public final class GameState: ObservableObject {
 
 // MARK: - Notification Names
 extension Notification.Name {
-    public static let gamePhaseChanged = Notification.Name("GameIO2P.gamePhaseChanged")
-    public static let playerJoined     = Notification.Name("GameIO2P.playerJoined")
-    public static let playerLeft       = Notification.Name("GameIO2P.playerLeft")
-    public static let raceStarted      = Notification.Name("GameIO2P.raceStarted")
-    public static let raceFinished     = Notification.Name("GameIO2P.raceFinished")
-    public static let achievementUnlocked = Notification.Name("GameIO2P.achievementUnlocked")
+    public static let gamePhaseChanged = Notification.Name("GameIO3P.gamePhaseChanged")
+    public static let playerJoined     = Notification.Name("GameIO3P.playerJoined")
+    public static let playerLeft       = Notification.Name("GameIO3P.playerLeft")
+    public static let raceStarted      = Notification.Name("GameIO3P.raceStarted")
+    public static let raceFinished     = Notification.Name("GameIO3P.raceFinished")
+    public static let achievementUnlocked = Notification.Name("GameIO3P.achievementUnlocked")
 }
 
 // MARK: - StoredGameData (Codable subset)

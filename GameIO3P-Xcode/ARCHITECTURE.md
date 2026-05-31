@@ -1,4 +1,4 @@
-# GameIO 2P - Complete Architecture & Implementation Guide
+# GameIO 3P - Complete Architecture & Implementation Guide
 
 ## Table of Contents
 1. [System Overview](#system-overview)
@@ -15,7 +15,7 @@
 
 ## System Overview
 
-GameIO 2P is a universal racing and gaming platform built with SwiftUI and Swift for Apple platforms. It features:
+GameIO 3P is a universal racing and gaming platform built with SwiftUI and Swift for Apple platforms. It features:
 
 - **7 Platform Support**: iPhone, iPad, macOS, watchOS, tvOS, CarPlay, Web
 - **25,000+ Lines of Production Code**: Comprehensive implementation with all systems
@@ -72,7 +72,7 @@ GameIO 2P is a universal racing and gaming platform built with SwiftUI and Swift
 - 2-minute stationary countdown before gameplay
 - Smooth dissolve transitions during motion detection
 
-### Web (HTML5 GameIO 2P)
+### Web (HTML5 GameIO 3P)
 - Responsive canvas rendering
 - Web Audio API
 - IndexedDB for persistence

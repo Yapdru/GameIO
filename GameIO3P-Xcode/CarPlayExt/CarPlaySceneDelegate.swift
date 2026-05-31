@@ -224,7 +224,7 @@ extension GameState {
 
 // MARK: - Notification Names
 extension Notification.Name {
-    static let carPlayStartPressed = Notification.Name("GameIO2P.carPlayStartPressed")
-    static let carPlayConnected    = Notification.Name("GameIO2P.carPlayConnected")
-    static let carPlayDisconnected = Notification.Name("GameIO2P.carPlayDisconnected")
+    static let carPlayStartPressed = Notification.Name("GameIO3P.carPlayStartPressed")
+    static let carPlayConnected    = Notification.Name("GameIO3P.carPlayConnected")
+    static let carPlayDisconnected = Notification.Name("GameIO3P.carPlayDisconnected")
 }

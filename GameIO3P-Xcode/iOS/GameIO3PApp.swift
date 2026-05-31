@@ -1,4 +1,4 @@
-// GameIO 2P — GameIO2PApp.swift
+// GameIO 3P — Complete Universal Racing Platform
 // Main app entry point — universal across iPhone, iPad, Mac Catalyst
 // Initializes CoreMotion, Audio, and game state at launch
 
@@ -8,7 +8,7 @@ import CoreMotion
 import Combine
 
 @main
-struct GameIO2PApp: App {
+struct GameIO3PApp: App {
 
     // MARK: - State Objects
     @StateObject private var gameState   = GameState.shared
@@ -45,7 +45,7 @@ struct GameIO2PApp: App {
         // Lock screen orientation handling
         setupOrientationSupport()
 
-        print("GameIO 2P started successfully")
+        print("GameIO 3P started successfully - Ultra Detail Graphics Enabled")
     }
 
     private func configureAudioSession() {
@@ -57,7 +57,7 @@ struct GameIO2PApp: App {
             )
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
-            print("GameIO 2P: Audio session error: \(error)")
+            print("GameIO 3P: Audio session error: \(error)")
         }
     }
 
