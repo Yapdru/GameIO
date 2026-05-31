@@ -25,6 +25,19 @@ public enum GamePhase: String, CaseIterable, Codable {
     case paused           = "paused"
     case gameOver         = "game_over"
     case victory          = "victory"
+    // Mini-games
+    case speedMatch       = "speed_match"
+    case driftKing        = "drift_king"
+    case trafficDodger    = "traffic_dodger"
+    case memoryMatch      = "memory_match"
+    case shapeCollector   = "shape_collector"
+    case bubbleBlast      = "bubble_blast"
+    case towerBuilder     = "tower_builder"
+    case neonSnake        = "neon_snake"
+    case animalQuiz       = "animal_quiz"
+    case mathChallenge    = "math_challenge"
+    case basketballToss   = "basketball_toss"
+    case soccerSkills     = "soccer_skills"
 }
 
 // MARK: - Platform Enum
