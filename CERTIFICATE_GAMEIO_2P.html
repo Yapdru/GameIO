@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameIO 2P — Certificate of Excellence</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Cinzel', serif;
+    overflow: hidden;
+  }
+
+  /* Animated background */
+  .bg-particles {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(245,166,35,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(245,166,35,0.05) 0%, transparent 60%),
+                #0a0a0a;
+    z-index: 0;
+  }
+
+  /* Stars */
+  .stars {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--dur, 3s) var(--delay, 0s) infinite alternate ease-in-out;
+  }
+  @keyframes twinkle {
+    from { opacity: 0.1; transform: scale(1); }
+    to   { opacity: 0.8; transform: scale(1.5); }
+  }
+
+  /* Certificate Container */
+  .certificate-wrapper {
+    position: relative;
+    z-index: 10;
+    padding: 20px;
+  }
+
+  .certificate {
+    width: 900px;
+    background: linear-gradient(145deg, #1a1410, #0d0b07, #1a1410);
+    border: none;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 80px rgba(245,166,35,0.3),
+      0 0 160px rgba(245,166,35,0.1),
+      inset 0 0 80px rgba(0,0,0,0.5);
+  }
+
+  /* Gold border frames */
+  .outer-border {
+    position: absolute;
+    inset: 12px;
+    border: 2px solid #f5a623;
+    border-radius: 2px;
+    pointer-events: none;
+    box-shadow: inset 0 0 30px rgba(245,166,35,0.1), 0 0 30px rgba(245,166,35,0.2);
+  }
+  .inner-border {
+    position: absolute;
+    inset: 20px;
+    border: 1px solid rgba(245,166,35,0.4);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+
+  /* Corner ornaments */
+  .corner {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+  }
+  .corner svg { width: 100%; height: 100%; }
+  .corner.tl { top: 10px;  left: 10px; }
+  .corner.tr { top: 10px;  right: 10px; transform: scaleX(-1); }
+  .corner.bl { bottom: 10px; left: 10px; transform: scaleY(-1); }
+  .corner.br { bottom: 10px; right: 10px; transform: scale(-1); }
+
+  /* HDR shimmer on border */
+  .border-shimmer {
+    position: absolute;
+    inset: 12px;
+    border: 2px solid transparent;
+    border-radius: 2px;
+    background:
+      linear-gradient(#1a1410, #1a1410) padding-box,
+      linear-gradient(90deg, #f5a623, #ffd700, #ff8c00, #f5a623, #ffd700) border-box;
+    background-size: 200% 100%;
+    animation: shimmerBorder 4s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes shimmerBorder {
+    from { background-position: 0% 50%; }
+    to   { background-position: 200% 50%; }
+  }
+
+  /* Content */
+  .cert-content {
+    position: relative;
+    padding: 60px 80px;
+    text-align: center;
+  }
+
+  /* Logo at top */
+  .cert-logo {
+    font-size: 13px;
+    letter-spacing: 8px;
+    color: rgba(245,166,35,0.6);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-family: 'Cinzel', serif;
+  }
+
+  .cert-title-main {
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    background: linear-gradient(135deg, #f5a623, #ffd700, #ff8c00, #f5a623);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 20px rgba(245,166,35,0.5));
+    animation: goldPulse 3s ease-in-out infinite alternate;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  @keyframes goldPulse {
+    from { filter: drop-shadow(0 0 15px rgba(245,166,35,0.4)); }
+    to   { filter: drop-shadow(0 0 30px rgba(245,166,35,0.8)); }
+  }
+
+  .cert-subtitle {
+    font-size: 14px;
+    letter-spacing: 10px;
+    color: rgba(245,166,35,0.5);
+    text-transform: uppercase;
+    margin-bottom: 36px;
+  }
+
+  /* Divider */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #f5a623, #ffd700, #f5a623, transparent);
+    margin: 24px 0;
+    position: relative;
+  }
+  .divider::before {
+    content: '★';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #0d0b07;
+    padding: 0 12px;
+    color: #f5a623;
+    font-size: 18px;
+  }
+
+  /* Certificate of body */
+  .cert-of-text {
+    font-size: 13px;
+    letter-spacing: 5px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+  }
+
+  .cert-type {
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #ffffff;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    text-shadow: 0 0 40px rgba(245,166,35,0.3);
+  }
+
+  /* Presented to */
+  .presented-to {
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    margin-bottom: 12px;
+  }
+
+  .recipient-name {
+    font-size: 44px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ffffff, #f5a623, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 32px;
+    letter-spacing: 2px;
+  }
+
+  /* Achievement description */
+  .achievement-text {
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.7);
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    max-width: 600px;
+    margin: 0 auto 32px;
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin: 32px 0;
+  }
+  .stat-item {
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 36px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #f5a623, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+  }
+
+  /* HDR Badge */
+  .hdr-badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+  }
+  .badge {
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    border: 1px solid;
+  }
+  .badge-hdr {
+    background: rgba(245,166,35,0.1);
+    border-color: #f5a623;
+    color: #f5a623;
+  }
+  .badge-dolby {
+    background: rgba(30,144,255,0.1);
+    border-color: #1E90FF;
+    color: #1E90FF;
+  }
+  .badge-e {
+    background: rgba(76,175,80,0.1);
+    border-color: #4CAF50;
+    color: #4CAF50;
+  }
+  .badge-platform {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* Signature row */
+  .sig-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(245,166,35,0.2);
+  }
+  .sig-block { text-align: center; }
+  .sig-line {
+    width: 160px;
+    height: 1px;
+    background: rgba(245,166,35,0.4);
+    margin: 0 auto 8px;
+  }
+  .sig-name {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+  }
+
+  /* Center seal */
+  .seal {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .seal-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid #f5a623;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, rgba(245,166,35,0.1), transparent);
+    box-shadow: 0 0 20px rgba(245,166,35,0.3);
+    animation: rotateSeal 20s linear infinite;
+    font-size: 28px;
+  }
+  @keyframes rotateSeal {
+    from { box-shadow: 0 0 20px rgba(245,166,35,0.3), 0 0 40px rgba(245,166,35,0.1); }
+    to   { box-shadow: 0 0 40px rgba(245,166,35,0.6), 0 0 80px rgba(245,166,35,0.2); }
+  }
+
+  /* Date & cert ID */
+  .cert-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.25);
+    font-family: 'Playfair Display', serif;
+  }
+
+  /* Print button */
+  .print-btn {
+    display: block;
+    margin: 20px auto 0;
+    padding: 12px 40px;
+    background: transparent;
+    border: 1px solid rgba(245,166,35,0.4);
+    color: #f5a623;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .print-btn:hover {
+    background: rgba(245,166,35,0.1);
+    box-shadow: 0 0 20px rgba(245,166,35,0.2);
+  }
+
+  @media print {
+    body { background: white; }
+    .bg-particles, .stars, .print-btn { display: none; }
+    .certificate { box-shadow: none; }
+    .cert-title-main {
+      background: none;
+      -webkit-text-fill-color: #b8860b;
+      color: #b8860b;
+    }
+    .cert-meta { color: #888; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-particles"></div>
+<div class="stars" id="stars"></div>
+
+<!-- Certificate -->
+<div class="certificate-wrapper">
+  <div class="certificate">
+    <div class="outer-border"></div>
+    <div class="inner-border"></div>
+    <div class="border-shimmer"></div>
+
+    <!-- Corner ornaments -->
+    <div class="corner tl">
+      <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 55 L5 5 L55 5" stroke="#f5a623" stroke-width="1.5" fill="none"/>
+        <path d="M5 5 L20 20" stroke="#f5a623" stroke-width="0.8" opacity="0.5"/>
+        <circle cx="5" cy="5" r="3" fill="#f5a623" opacity="0.8"/>
+        <circle cx="30" cy="5" r="1.5" fill="#f5a623" opacity="0.4"/>
+        <circle cx="5" cy="30" r="1.5" fill="#f5a623" opacity="0.4"/>
+        <path d="M15 5 L5 15" stroke="#f5a623" stroke-width="0.5" opacity="0.3"/>
+      </svg>
+    </div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <!-- Main content -->
+    <div class="cert-content">
+      <div class="cert-logo">Yapdru Studios · 2026</div>
+      <div class="cert-title-main">GAMEIO 2P</div>
+      <div class="cert-subtitle">Universal Gaming Platform</div>
+
+      <div class="divider"></div>
+
+      <div class="cert-of-text">Certificate of</div>
+      <div class="cert-type">Excellence &amp; Achievement</div>
+
+      <div class="presented-to">Presented to</div>
+      <div class="recipient-name">GameIO 2P Project</div>
+
+      <p class="achievement-text">
+        This certificate is hereby awarded in recognition of the creation of an
+        extraordinary universal gaming platform — <em>GameIO 2P</em> — featuring
+        25,000 lines of meticulously crafted code, 10K Dolby Vision HDR visual
+        excellence, Forza Horizon-class detail, and full support for all Apple
+        platforms including iPhone, iPad, Mac, Apple Watch, tvOS, and CarPlay.
+      </p>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-value">25K+</span>
+          <span class="stat-label">Lines of Code</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">7</span>
+          <span class="stat-label">Platforms</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">9</span>
+          <span class="stat-label">Mini Games</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">10K</span>
+          <span class="stat-label">HDR Quality</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value">10</span>
+          <span class="stat-label">Car Brands</span>
+        </div>
+      </div>
+
+      <!-- Badges -->
+      <div class="hdr-badge-row">
+        <span class="badge badge-hdr">10K HDR</span>
+        <span class="badge badge-dolby">Dolby Vision</span>
+        <span class="badge badge-e">E for Everyone</span>
+        <span class="badge badge-platform">iPhone</span>
+        <span class="badge badge-platform">iPad</span>
+        <span class="badge badge-platform">Mac</span>
+        <span class="badge badge-platform">Apple Watch</span>
+        <span class="badge badge-platform">tvOS</span>
+        <span class="badge badge-platform">CarPlay</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Signature row -->
+      <div class="sig-row">
+        <div class="sig-block">
+          <div class="sig-line"></div>
+          <div class="sig-name">Lead Developer</div>
+        </div>
+
+        <div class="sig-block">
+          <div class="seal">
+            <div class="seal-inner">🏆</div>
+          </div>
+          <div class="sig-name" style="margin-top:8px">Official Seal</div>
+        </div>
+
+        <div class="sig-block">
+          <div class="sig-line"></div>
+          <div class="sig-name">Quality Assurance</div>
+        </div>
+      </div>
+
+      <!-- Meta -->
+      <div class="cert-meta">
+        <span>CERT-GAMEIO2P-2026-001</span>
+        <span>Issued: May 29, 2026</span>
+        <span>yapdru/gameio · GitHub</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="print-btn" onclick="window.print()">⬇ Save / Print Certificate</button>
+</div>
+
+<script>
+  // Generate twinkling stars
+  const starsContainer = document.getElementById('stars');
+  for (let i = 0; i < 150; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 2 + 0.5;
+    star.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      left: ${Math.random() * 100}%;
+      top: ${Math.random() * 100}%;
+      --dur: ${2 + Math.random() * 4}s;
+      --delay: ${Math.random() * 4}s;
+    `;
+    starsContainer.appendChild(star);
+  }
+</script>
+</body>
+</html>
